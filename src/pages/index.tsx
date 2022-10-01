@@ -1,6 +1,8 @@
 import { Ground } from '@/components/canvas/Ground'
+import { Player } from '@/components/canvas/Player'
+import { Wall } from '@/components/canvas/Wall'
 import { Physics } from '@react-three/cannon'
-import { PointerLockControls, Sky } from '@react-three/drei'
+import { Sky } from '@react-three/drei'
 import dynamic from 'next/dynamic'
 
 // Dynamic import is used to prevent a payload when the website start that will include threejs r3f etc..
@@ -27,14 +29,10 @@ Page.r3f = (props) => (
     <Sky sunPosition={[100, 20, 100]} />
     <ambientLight intensity={0.3} />
     <Physics>
+      <Player />
+      <Wall position={[0, 0, -2]} />
       <Ground />
     </Physics>
-    {/* <PointerLockControls
-      addEventListener={undefined}
-      hasEventListener={undefined}
-      removeEventListener={undefined}
-      dispatchEvent={undefined}
-    /> */}
   </>
 )
 
