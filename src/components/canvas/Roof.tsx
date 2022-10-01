@@ -1,13 +1,7 @@
 import { useTexture } from '@react-three/drei'
 import { useBox } from '@react-three/cannon'
 
-export const Walls = ({ positions }) => {
-  return positions.map((position, index) => (
-    <Wall key={index} position={position} />
-  ))
-}
-
-export const Wall = (props) => {
+export const Roof = (props) => {
   const [ref] = useBox(() => ({ type: 'Static', ...props }))
   const texture = useTexture({
     map: './assets/ground/diff.jpg',
@@ -29,8 +23,8 @@ export const Wall = (props) => {
     //   <boxGeometry args={[1, 1, 1]} />
     // </mesh>
     <mesh ref={ref} castShadow receiveShadow>
-      <boxGeometry args={[1, 3, 1]} />
-      <meshStandardMaterial color='lightgrey' />
+      <boxGeometry args={[5, 0, 5]} />
+      <meshStandardMaterial color='grey' />
     </mesh>
   )
 }

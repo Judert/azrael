@@ -1,5 +1,6 @@
 import { Ground } from '@/components/canvas/Ground'
 import { Player } from '@/components/canvas/Player'
+import { Roof } from '@/components/canvas/Roof'
 import { Wall } from '@/components/canvas/Wall'
 import { Physics } from '@react-three/cannon'
 import { Sky } from '@react-three/drei'
@@ -27,10 +28,12 @@ const Page = (props) => {
 Page.r3f = (props) => (
   <>
     <Sky sunPosition={[100, 20, 100]} />
-    <ambientLight intensity={0.3} />
+    <ambientLight intensity={0.1} />
     <Physics>
+      <Roof position={[0, 3, 0]} />
       <Player />
-      <Wall position={[0, 0, -2]} />
+      <Wall position={[0, 1.5, -2]} />
+      <Wall position={[1, 1.5, -2]} />
       <Ground />
     </Physics>
   </>
