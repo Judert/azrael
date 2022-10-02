@@ -56,14 +56,21 @@ function Map({ edit, setEdit }) {
   const [penColor, setPenColor] = useState('black')
   const [width, setWidth] = useState(sizes[1])
   const [height, setHeight] = useState(sizes[1])
+  const [colors, setColors] = useState(null)
 
-  let colors = Array.from({ length: height }, (y, i) =>
-    Array.from({ length: width }, (x, j) =>
-      i === 0 || i === width - 1 || j === 0 || j === height - 1
-        ? 'black'
-        : 'white'
+  useEffect(() => {
+    setColors(
+      Array.from({ length: height }, (y, i) =>
+        Array.from({ length: width }, (x, j) =>
+          i === 0 || i === height - 1 || j === 0 || j === width - 1
+            ? 'black'
+            : 'white'
+        )
+      )
     )
-  )
+  }, [width, height])
+
+  console.log(colors)
 
   return (
     <div className='flex flex-col'>
@@ -77,6 +84,7 @@ function Map({ edit, setEdit }) {
                   key={index}
                   type='radio'
                   value={size}
+                  name='height'
                   checked={height === size}
                   onChange={(e) => {
                     setHeight(parseInt(e.target.value))
@@ -91,6 +99,7 @@ function Map({ edit, setEdit }) {
                   key={index}
                   type='radio'
                   value={size}
+                  name='width'
                   checked={width === size}
                   onChange={(e) => {
                     setWidth(parseInt(e.target.value))
@@ -104,7 +113,7 @@ function Map({ edit, setEdit }) {
           </div>
         )}
         <div className='flex flex-col'>
-          {colors.map((row, index) => {
+          {colors?.map((row, index) => {
             return (
               <ol className='flex flex-row' key={index}>
                 {row.map((color, index) => {
