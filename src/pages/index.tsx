@@ -7,6 +7,7 @@ import { Sky } from '@react-three/drei'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import { useEffect, useRef, useState } from 'react'
+import { Objects } from '@/data/enums'
 
 // Dynamic import is used to prevent a payload when the website start that will include threejs r3f etc..
 // WARNING ! errors might get obfuscated by using dynamic import.
@@ -26,85 +27,163 @@ export async function getStaticProps() {
 
 // dom components goes here
 export default function Page(props) {
-  const canvasRef = useRef(null)
-  const ctxRef = useRef(null)
-  const [isDrawing, setIsDrawing] = useState(false)
-  const [lineWidth, setLineWidth] = useState(1)
-  const [lineColor, setLineColor] = useState('black')
   const [level, setLevel] = useState(1)
   const [edit, setEdit] = useState(false)
-  const [width, setWidth] = useState(16)
-  const [height, setHeight] = useState(16)
-
-  useEffect(() => {
-    const canvas = canvasRef.current
-    const ctx = canvas.getContext('2d')
-    ctx.lineCap = 'round'
-    ctx.lineJoin = 'round'
-    ctx.strokeStyle = lineColor
-    ctx.lineWidth = lineWidth
-    ctx.scale(1, 2)
-    ctxRef.current = ctx
-  }, [lineColor, lineWidth])
-
-  const startDrawing = (e) => {
-    ctxRef.current.beginPath()
-    ctxRef.current.moveTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY)
-    setIsDrawing(true)
-  }
-
-  const endDrawing = () => {
-    ctxRef.current.closePath()
-    setIsDrawing(false)
-  }
-
-  const draw = (e) => {
-    if (!isDrawing) {
-      return
-    }
-    ctxRef.current.lineTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY)
-
-    ctxRef.current.stroke()
-  }
 
   return (
     <main className='container flex flex-col items-center justify-center p-4 mx-auto'>
       <h1 className='text-4xl font-bold'>Horror Game</h1>
       <div className='flex flex-col justify-center max-w-xl p-4 items-left'>
-        <h2 className='text-2xl font-bold'>Level {level}</h2>
-        <div className='flex flex-row p-4'>
+        <h2 className='text-2xl font-bold'>
+          Level {level} {edit && 'Edit'}
+        </h2>
+        <div className='flex flex-row p-4 gap-4'>
           {!edit && level > 1 && (
             <button onClick={() => setLevel(level - 1)}>Previous</button>
           )}
-          <div className='flex flex-col'>
-            <canvas
-              onMouseDown={startDrawing}
-              onMouseUp={endDrawing}
-              onMouseMove={draw}
-              ref={canvasRef}
-              width={`30px`}
-              height={`30px`}
-            />
-            <div className='flex flex-row p-4 gap-4'>
-              {edit ? (
-                <>
-                  <button onClick={() => {}}>Save</button>
-                  <button onClick={() => setEdit(false)}>Cancel</button>
-                </>
-              ) : (
-                <>
-                  <button onClick={() => {}}>Play</button>
-                  <button onClick={() => setEdit(true)}>Edit</button>
-                </>
-              )}
-            </div>
-          </div>
+          <Map edit={edit} setEdit={setEdit} />
           {!edit && level < 3 && (
             <button onClick={() => setLevel(level + 1)}>Next</button>
           )}
         </div>
       </div>
     </main>
+  )
+}
+
+function Map({ edit, setEdit }) {
+  const sizes = [8, 16]
+  const [penColor, setPenColor] = useState('black')
+  const [width, setWidth] = useState(sizes[1])
+  const [height, setHeight] = useState(sizes[1])
+
+  let colors = Array.from({ length: height }, (y, i) =>
+    Array.from({ length: width }, (x, j) =>
+      i === 0 || i === width - 1 || j === 0 || j === height - 1
+        ? 'black'
+        : 'white'
+    )
+  )
+
+  return (
+    <div className='flex flex-col'>
+      <div className='flex flex-row gap-4'>
+        {edit && (
+          <div className='flex flex-col justify-center gap-4'>
+            Height
+            <div className='flex flex-row gap-4'>
+              {sizes.map((size, index) => (
+                <input
+                  key={index}
+                  type='radio'
+                  value={size}
+                  checked={height === size}
+                  onChange={(e) => {
+                    setHeight(parseInt(e.target.value))
+                  }}
+                />
+              ))}
+            </div>
+            Width
+            <div className='flex flex-row gap-4'>
+              {sizes.map((size, index) => (
+                <input
+                  key={index}
+                  type='radio'
+                  value={size}
+                  checked={width === size}
+                  onChange={(e) => {
+                    setWidth(parseInt(e.target.value))
+                  }}
+                />
+              ))}
+            </div>
+            <button onClick={() => setEdit(false)}>Reset</button>
+            <button onClick={() => setEdit(false)}>Import</button>
+            <button onClick={() => setEdit(false)}>Export</button>
+          </div>
+        )}
+        <div className='flex flex-col'>
+          {colors.map((row, index) => {
+            return (
+              <ol className='flex flex-row' key={index}>
+                {row.map((color, index) => {
+                  return (
+                    <Pixel
+                      key={index}
+                      color={color}
+                      penColor={penColor}
+                      edit={edit}
+                    />
+                  )
+                })}
+              </ol>
+            )
+          })}
+        </div>
+        {edit && (
+          <div className='flex flex-col justify-center gap-4'>
+            {Object.entries(Objects).map(([key, value]) => {
+              return (
+                <button
+                  key={key}
+                  onClick={() => setPenColor(value.description)}
+                >
+                  {key}
+                </button>
+              )
+            })}
+          </div>
+        )}
+      </div>
+      <div className='flex flex-row justify-center p-4 gap-4'>
+        {edit ? (
+          <>
+            <button onClick={() => {}}>Save</button>
+            <button onClick={() => setEdit(false)}>Cancel</button>
+          </>
+        ) : (
+          <>
+            <button onClick={() => {}}>Play</button>
+            <button onClick={() => setEdit(true)}>Edit</button>
+          </>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function Pixel({ color, penColor, edit }) {
+  const [pixelColor, setPixelColor] = useState(color)
+  const [oldColor, setOldColor] = useState(pixelColor)
+  const [canChangeColor, setCanChangeColor] = useState(true)
+
+  function applyColor() {
+    setPixelColor(penColor)
+    // setCanChangeColor(false)
+  }
+
+  function changeColorOnHover() {
+    setOldColor(pixelColor)
+    setPixelColor(penColor)
+  }
+
+  function resetColor() {
+    // if (canChangeColor) {
+    setPixelColor(oldColor)
+    // }
+
+    // setCanChangeColor(true)
+  }
+
+  return (
+    <div
+      className='w-6 h-6 border-2 border-black'
+      onClick={edit ? applyColor : () => {}}
+      onMouseEnter={edit ? changeColorOnHover : () => {}}
+      onMouseLeave={edit ? resetColor : () => {}}
+      style={{ backgroundColor: pixelColor }}
+    ></div>
   )
 }
 
