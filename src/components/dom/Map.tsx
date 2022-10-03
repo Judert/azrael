@@ -1,14 +1,18 @@
 import { Objects } from '@/data/enums'
-import { getCookie } from 'cookies-next'
-import { useContext, useReducer, useState } from 'react'
-import * as fs from 'fs'
+import { getCookie, setCookie } from 'cookies-next'
+import { useContext, useReducer, useRef, useState } from 'react'
 import Pixel from './Pixel'
-import { v4 as uuidv4 } from 'uuid'
 import { MapContext } from '@/lib/context'
+import level from '@/data/level.json'
 
 export default function Map({ edit, setEdit }) {
   const [penColor, setPenColor] = useState('black')
   const [map, setMap] = useContext(MapContext)
+
+  const editCommit = () => {
+    setEdit(false)
+    setCookie('1', map)
+  }
 
   const editCancel = () => {
     setEdit(false)
@@ -16,9 +20,38 @@ export default function Map({ edit, setEdit }) {
   }
 
   const levelExport = () => {
-    fs.writeFile('./1.json', JSON.stringify(map), (err) => {
-      if (err) alert('Error writing file:' + JSON.stringify(err))
-    })
+    const jsonString = `data:text/json;chatset=utf-8,${encodeURIComponent(
+      JSON.stringify(map)
+    )}`
+    const link = document.createElement('a')
+    link.href = jsonString
+    link.download = 'data.json'
+    link.click()
+  }
+
+  const levelImport = (e) => {
+    const file = e.target.files[0]
+    const reader = new FileReader()
+    reader.onload = async (e) => {
+      setMap(JSON.parse(String(e.target.result)))
+    }
+    reader.readAsText(file)
+  }
+  const hiddenFileInput = useRef(null)
+  const handleClick = (event) => {
+    hiddenFileInput.current.click()
+  }
+
+  const levelClear = () => {
+    setMap(
+      Array.from({ length: 16 }, () =>
+        Array.from({ length: 16 }, () => 'white')
+      )
+    )
+  }
+
+  const levelReset = () => {
+    setMap(level)
   }
 
   return (
@@ -26,9 +59,18 @@ export default function Map({ edit, setEdit }) {
       <div className='flex flex-row gap-4'>
         {edit && (
           <div className='flex flex-col justify-center gap-4'>
-            <button onClick={() => setEdit(false)}>Clear</button>
-            <button onClick={() => setEdit(false)}>Reset</button>
-            <button onClick={() => setEdit(false)}>Import</button>
+            <button onClick={() => levelClear()}>Clear</button>
+            <button onClick={() => levelReset()}>Reset</button>
+            <>
+              <button onClick={handleClick}>Import</button>
+              <input
+                type='file'
+                ref={hiddenFileInput}
+                style={{ display: 'none' }}
+                onChange={levelImport}
+                accept='.json'
+              />
+            </>
             <button onClick={() => levelExport()}>Export</button>
           </div>
         )}
@@ -40,7 +82,6 @@ export default function Map({ edit, setEdit }) {
                   return (
                     <Pixel
                       key={j}
-                      //   color={color}
                       i={i}
                       j={j}
                       penColor={penColor}
@@ -70,7 +111,7 @@ export default function Map({ edit, setEdit }) {
       <div className='flex flex-row justify-center p-4 gap-4'>
         {edit ? (
           <>
-            <button onClick={() => {}}>Save</button>
+            <button onClick={() => editCommit()}>Save</button>
             <button onClick={() => editCancel()}>Cancel</button>
           </>
         ) : (

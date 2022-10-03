@@ -16,6 +16,7 @@ import {
 } from 'cookies-next'
 import Map from '@/components/dom/Map'
 import { MapContext } from '@/lib/context'
+import level from '@/data/level.json'
 
 // Dynamic import is used to prevent a payload when the website start that will include threejs r3f etc..
 // WARNING ! errors might get obfuscated by using dynamic import.
@@ -25,18 +26,10 @@ import { MapContext } from '@/lib/context'
 //   ssr: false,
 // })
 
-const defaultMap = Array.from({ length: 16 }, (y, i) =>
-  Array.from({ length: 16 }, (x, j) => 'white')
-)
-
-export const getServerSideProps = ({ req, res }) => {
-  if (!hasCookie('1')) {
-    setCookie('1', defaultMap, { req, res })
-  }
+export const getStaticProps = () => {
   return {
     props: {
       title: 'Index',
-      original: JSON.parse(String(getCookie('1', { req, res }))),
     },
   }
 }
@@ -46,13 +39,16 @@ export default function Page(props) {
   const [map, setMap] = useContext(MapContext)
 
   useEffect(() => {
-    setMap(props.original)
+    if (!hasCookie('1')) {
+      setCookie('1', level)
+    }
+    setMap(JSON.parse(String(getCookie('1'))))
   }, [])
 
   return (
     <main className='container flex flex-col items-center justify-center p-4 mx-auto'>
       <h1 className='text-4xl font-bold'>Horror Game</h1>
-      <div className='flex flex-col justify-center max-w-xl p-4 items-left'>
+      <div className='flex flex-col justify-center max-w-xl p-4 items-left gap-4'>
         <h2 className='text-2xl font-bold'>Level 1 {edit && 'Edit'}</h2>
         <Map edit={edit} setEdit={setEdit} />
       </div>

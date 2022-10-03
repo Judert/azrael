@@ -4,17 +4,14 @@ import '@/styles/index.css'
 import dynamic from 'next/dynamic'
 import { MapContext } from '@/lib/context'
 import { useState } from 'react'
+import level from '@/data/level.json'
 
 const LCanvas = dynamic(() => import('@/components/layout/canvas'), {
   ssr: true,
 })
 
 function App({ Component, pageProps = { title: 'index' } }) {
-  const [map, setMap] = useState(
-    Array.from({ length: 16 }, (y, i) =>
-      Array.from({ length: 16 }, (x, j) => 'white')
-    )
-  )
+  const [map, setMap] = useState(level)
   return (
     <MapContext.Provider value={[map, setMap]}>
       <Header title={pageProps.title} />
