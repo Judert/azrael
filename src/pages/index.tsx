@@ -8,8 +8,14 @@ import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import { useEffect, useRef, useState } from 'react'
 import { Objects } from '@/data/enums'
-import { useCookies } from 'react-cookie'
 import * as fs from 'fs'
+import {
+  getCookies,
+  getCookie,
+  setCookie,
+  deleteCookie,
+  hasCookie,
+} from 'cookies-next'
 
 // Dynamic import is used to prevent a payload when the website start that will include threejs r3f etc..
 // WARNING ! errors might get obfuscated by using dynamic import.
@@ -19,32 +25,53 @@ import * as fs from 'fs'
 //   ssr: false,
 // })
 
-export async function getStaticProps() {
-  return {
-    props: {
-      title: 'Index',
-    },
+const levels = 3
+
+// export async function getStaticProps() {
+//   return {
+//     props: {
+//       title: 'Index',
+//     },
+//   }
+// }
+
+export const getServerSideProps = ({ req, res }) => {
+  for (let level = 1; level <= levels; level++) {
+    if (!hasCookie('level' + level)) {
+      setCookie(
+        'level' + level,
+        Array.from({ length: 16 }, (y, i) =>
+          Array.from({ length: 16 }, (x, j) => 'white')
+        ),
+        { req, res }
+      )
+    }
   }
+  return { props: { title: 'Index' } }
 }
 
 // dom components goes here
 export default function Page(props) {
   const [level, setLevel] = useState(1)
+  const levelString = 'level' + level
   const [edit, setEdit] = useState(false)
-  const [cookies, setCookie] = useCookies(['level1', 'level2', 'level3'])
+  const [colors, setColors] = useState([])
+
+  // useEffect(() => {
+  //   mapUpdate()
+  // }, [])
 
   useEffect(() => {
-    if (!cookies.level1) {
-      console.log('cookie not found')
-      setCookie(
-        'level1',
-        Array.from({ length: 16 }, (y, i) =>
-          Array.from({ length: 16 }, (x, j) => 'white')
-        ),
-        { path: '/' }
-      )
-    }
-  }, [])
+    mapUpdate()
+  }, [level])
+
+  const mapUpdate = () => {
+    setColors(
+      typeof getCookie(levelString) === 'string'
+        ? JSON.parse(String(getCookie(levelString)))
+        : []
+    )
+  }
 
   return (
     <main className='container flex flex-col items-center justify-center p-4 mx-auto'>
@@ -57,8 +84,8 @@ export default function Page(props) {
           {!edit && level > 1 && (
             <button onClick={() => setLevel(level - 1)}>Previous</button>
           )}
-          <Map edit={edit} setEdit={setEdit} level={level} />
-          {!edit && level < 3 && (
+          <Map {...props} />
+          {!edit && level < levels && (
             <button onClick={() => setLevel(level + 1)}>Next</button>
           )}
         </div>
@@ -67,18 +94,29 @@ export default function Page(props) {
   )
 }
 
-function Map({ edit, setEdit, level }) {
+function Map({ edit, setEdit, level, levelString, colors, setColors }) {
   const sizes = [8, 16]
   const [penColor, setPenColor] = useState('black')
   const [width, setWidth] = useState(sizes[1])
   const [height, setHeight] = useState(sizes[1])
-  const [cookies, setCookie] = useCookies(['level' + level])
-  const [colors, setColors] = useState(cookies['level' + level])
+
+  const editCancel = () => {
+    setEdit(false)
+    setColors(
+      typeof getCookie(levelString) === 'string'
+        ? JSON.parse(String(getCookie(levelString)))
+        : []
+    )
+  }
 
   const levelExport = () => {
-    fs.writeFile('./level' + level + '.json', JSON.stringify(colors), (err) => {
-      if (err) alert('Error writing file:' + JSON.stringify(err))
-    })
+    fs.writeFile(
+      './' + levelString + '.json',
+      JSON.stringify(colors),
+      (err) => {
+        if (err) alert('Error writing file:' + JSON.stringify(err))
+      }
+    )
   }
 
   return (
@@ -158,7 +196,7 @@ function Map({ edit, setEdit, level }) {
         {edit ? (
           <>
             <button onClick={() => {}}>Save</button>
-            <button onClick={() => setEdit(false)}>Cancel</button>
+            <button onClick={() => editCancel()}>Cancel</button>
           </>
         ) : (
           <>
