@@ -1,12 +1,14 @@
 import { Objects } from '@/data/enums'
 import { getCookie } from 'cookies-next'
-import { useState } from 'react'
+import { useContext, useReducer, useState } from 'react'
 import * as fs from 'fs'
 import Pixel from './Pixel'
+import { v4 as uuidv4 } from 'uuid'
+import { MapContext } from '@/lib/context'
 
-export default function Map({ edit, setEdit, mapOriginal }) {
+export default function Map({ edit, setEdit }) {
   const [penColor, setPenColor] = useState('black')
-  const [map, setMap] = useState(mapOriginal)
+  const [map, setMap] = useContext(MapContext)
 
   const editCancel = () => {
     setEdit(false)
@@ -31,14 +33,16 @@ export default function Map({ edit, setEdit, mapOriginal }) {
           </div>
         )}
         <div className='flex flex-col'>
-          {map.map((row, index) => {
+          {map.map((row, i) => {
             return (
-              <ol className='flex flex-row' key={index}>
-                {row.map((color, index) => {
+              <ol className='flex flex-row' key={i}>
+                {row.map((color, j) => {
                   return (
                     <Pixel
-                      key={index}
-                      color={color}
+                      key={j}
+                      //   color={color}
+                      i={i}
+                      j={j}
                       penColor={penColor}
                       edit={edit}
                     />

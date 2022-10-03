@@ -6,7 +6,7 @@ import { Physics } from '@react-three/cannon'
 import { Sky } from '@react-three/drei'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
-import { useEffect, useRef, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import {
   getCookies,
   getCookie,
@@ -15,6 +15,7 @@ import {
   hasCookie,
 } from 'cookies-next'
 import Map from '@/components/dom/Map'
+import { MapContext } from '@/lib/context'
 
 // Dynamic import is used to prevent a payload when the website start that will include threejs r3f etc..
 // WARNING ! errors might get obfuscated by using dynamic import.
@@ -24,9 +25,8 @@ import Map from '@/components/dom/Map'
 //   ssr: false,
 // })
 
-const sizes = [8, 16]
-const defaultMap = Array.from({ length: sizes[1] }, (y, i) =>
-  Array.from({ length: sizes[1] }, (x, j) => 'white')
+const defaultMap = Array.from({ length: 16 }, (y, i) =>
+  Array.from({ length: 16 }, (x, j) => 'white')
 )
 
 export const getServerSideProps = ({ req, res }) => {
@@ -36,20 +36,25 @@ export const getServerSideProps = ({ req, res }) => {
   return {
     props: {
       title: 'Index',
-      mapOriginal: JSON.parse(String(getCookie('1', { req, res }))),
+      original: JSON.parse(String(getCookie('1', { req, res }))),
     },
   }
 }
 
 export default function Page(props) {
   const [edit, setEdit] = useState(false)
+  const [map, setMap] = useContext(MapContext)
+
+  useEffect(() => {
+    setMap(props.original)
+  }, [])
 
   return (
     <main className='container flex flex-col items-center justify-center p-4 mx-auto'>
       <h1 className='text-4xl font-bold'>Horror Game</h1>
       <div className='flex flex-col justify-center max-w-xl p-4 items-left'>
         <h2 className='text-2xl font-bold'>Level 1 {edit && 'Edit'}</h2>
-        <Map edit={edit} setEdit={setEdit} mapOriginal={props.mapOriginal} />
+        <Map edit={edit} setEdit={setEdit} />
       </div>
     </main>
   )

@@ -1,25 +1,35 @@
-import { useState } from 'react'
+import { MapContext } from '@/lib/context'
+import { useContext, useState } from 'react'
 
-export default function Pixel({ color, penColor, edit }) {
-  const [pixelColor, setPixelColor] = useState(color)
-  const [oldColor, setOldColor] = useState(pixelColor)
+export default function Pixel({ i, j, penColor, edit }) {
+  const [map, setMap] = useContext(MapContext)
+  // const [pixelColor, setPixelColor] = useState()
+  const [oldColor, setOldColor] = useState(map[i][j])
   const [canChangeColor, setCanChangeColor] = useState(true)
 
   function applyColor() {
-    setPixelColor(penColor)
+    setColor(penColor)
     setCanChangeColor(false)
   }
 
   function changeColorOnHover() {
-    setOldColor(pixelColor)
-    setPixelColor(penColor)
+    setOldColor(map[i][j])
+    setColor(penColor)
   }
 
   function resetColor() {
     if (canChangeColor) {
-      setPixelColor(oldColor)
+      setColor(oldColor)
     }
     setCanChangeColor(true)
+  }
+
+  function setColor(newColor) {
+    setMap(
+      map.map((row, r) =>
+        row.map((color, c) => (r === i && c === j ? newColor : color))
+      )
+    )
   }
 
   return (
@@ -28,7 +38,7 @@ export default function Pixel({ color, penColor, edit }) {
       onClick={edit ? applyColor : () => {}}
       onMouseEnter={edit ? changeColorOnHover : () => {}}
       onMouseLeave={edit ? resetColor : () => {}}
-      style={{ backgroundColor: pixelColor }}
+      style={{ backgroundColor: map[i][j] }}
     ></div>
   )
 }
