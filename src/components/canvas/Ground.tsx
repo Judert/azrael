@@ -12,7 +12,7 @@ export const Ground = (props) => {
   const [ref] = usePlane(() => ({ rotation: [-Math.PI / 2, 0, 0], ...props }))
   return (
     <mesh ref={ref} receiveShadow castShadow>
-      <planeGeometry args={[5, 5]} />
+      <planeGeometry args={[16, 16]} />
       <meshStandardMaterial
         // {...texture}
         color='grey'

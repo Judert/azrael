@@ -4,11 +4,12 @@ import { useContext, useReducer, useRef, useState } from 'react'
 import Pixel from './Pixel'
 import { MapContext, PlayContext } from '@/lib/context'
 import level from '@/data/level.json'
+import { useRouter } from 'next/router'
 
 export default function Map({ edit, setEdit }) {
   const [penColor, setPenColor] = useState('black')
   const [map, setMap] = useContext(MapContext)
-  const [play, setPlay] = useContext(PlayContext)
+  const router = useRouter()
 
   const editCommit = () => {
     setEdit(false)
@@ -117,7 +118,7 @@ export default function Map({ edit, setEdit }) {
           </>
         ) : (
           <>
-            <button onClick={() => setPlay(true)}>Play</button>
+            <button onClick={() => router.push('/play')}>Play</button>
             <button onClick={() => setEdit(true)}>Edit</button>
           </>
         )}
