@@ -24,7 +24,7 @@ export const Roof = (props) => {
     // </mesh>
     <mesh ref={ref} castShadow receiveShadow>
       <boxGeometry args={[16, 0, 16]} />
-      <meshStandardMaterial color='red' />
+      <meshStandardMaterial color='white' />
     </mesh>
   )
 }

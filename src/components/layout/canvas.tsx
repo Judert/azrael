@@ -17,7 +17,7 @@ const LCanvas = ({ children }) => {
       onCreated={(state) => state.events.connect(dom.current)}
     >
       <PointerLockControls />
-      <AsciiRenderer invert />
+      {/* <AsciiRenderer invert /> */}
       <Preload all />
       {children}
     </Canvas>

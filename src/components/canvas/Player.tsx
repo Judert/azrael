@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import { useEffect, useRef, useState } from 'react'
-import { useCylinder, useSphere } from '@react-three/cannon'
+import { useCylinder, useSphere, useOcta, useBox } from '@react-three/cannon'
 import { useThree, useFrame } from '@react-three/fiber'
 
 const SPEED = 5
@@ -42,10 +42,10 @@ const usePlayerControls = () => {
 }
 
 export const Player = (props) => {
-  const [ref, api] = useSphere(() => ({
+  const [ref, api] = useBox(() => ({
     mass: 1,
     type: 'Dynamic',
-    position: [1, 1, 1],
+    position: [1, 2, 1],
     ...props,
   }))
   const { forward, backward, left, right } = usePlayerControls()
@@ -62,13 +62,16 @@ export const Player = (props) => {
       .multiplyScalar(SPEED)
       .applyEuler(camera.rotation)
     speed.fromArray(velocity.current)
+    // lock rotation
+    // api.rotation.set(0, 0, 0)
     api.velocity.set(direction.x, velocity.current[1], direction.z)
   })
   return (
     <>
       <mesh ref={ref} castShadow receiveShadow>
-        <sphereGeometry args={[0.25]} />
-        <meshStandardMaterial color='pink' />
+        {/* <cylinderGeometry args={[0.25, 0.25, 1, 32]} /> */}
+        <boxGeometry args={[0.5, 0.5, 0.5]} />
+        <meshStandardMaterial color='white' />
       </mesh>
     </>
   )

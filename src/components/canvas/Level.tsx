@@ -20,11 +20,12 @@ export default function Level({ map }) {
   return (
     <>
       <color attach='background' args={['black']} />
-      <ambientLight intensity={0.05} />
+      {/* <ambientLight intensity={0.0005} /> */}
+      <pointLight color='white' position={[15, 3, 15]} />
       <Physics>
         <Roof position={[7.5, 3, 7.5]} />
         <Player />
-        <Box position={[3, 2, 3]} />
+        {/* <Box position={[3, 2, 3]} /> */}
         <Surround />
         {map.map((row, i) =>
           row.map((color, j) => {

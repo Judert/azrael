@@ -12,7 +12,7 @@ export const Box = (props) => {
   return (
     <mesh ref={ref} castShadow receiveShadow>
       <boxGeometry args={[1, 1, 1]} />
-      <meshStandardMaterial color='lightgrey' />
+      <meshStandardMaterial color='white' />
     </mesh>
   )
 }

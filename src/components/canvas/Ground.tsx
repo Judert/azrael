@@ -15,7 +15,7 @@ export const Ground = (props) => {
       <planeGeometry args={[16, 16]} />
       <meshStandardMaterial
         // {...texture}
-        color='grey'
+        color='white'
       />
     </mesh>
   )
