@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import { useEffect, useRef, useState } from 'react'
-import { useSphere } from '@react-three/cannon'
+import { useCylinder, useSphere } from '@react-three/cannon'
 import { useThree, useFrame } from '@react-three/fiber'
 
 const SPEED = 5
@@ -45,8 +45,7 @@ export const Player = (props) => {
   const [ref, api] = useSphere(() => ({
     mass: 1,
     type: 'Dynamic',
-    position: [1, 2, 1],
-    radius: 0.1,
+    position: [1, 1, 1],
     ...props,
   }))
   const { forward, backward, left, right } = usePlayerControls()
@@ -68,7 +67,7 @@ export const Player = (props) => {
   return (
     <>
       <mesh ref={ref} castShadow receiveShadow>
-        {/* <sphereGeometry /> */}
+        <sphereGeometry args={[0.25]} />
         <meshStandardMaterial color='pink' />
       </mesh>
     </>

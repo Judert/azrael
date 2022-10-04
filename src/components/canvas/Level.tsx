@@ -3,6 +3,7 @@ import { Player } from '@/components/canvas/Player'
 import { Roof } from '@/components/canvas/Roof'
 import { Wall } from '@/components/canvas/Wall'
 import { Physics } from '@react-three/cannon'
+import { Box } from './Box'
 
 export default function Level({ map }) {
   const Surround = () => {
@@ -23,6 +24,7 @@ export default function Level({ map }) {
       <Physics>
         <Roof position={[7.5, 3, 7.5]} />
         <Player />
+        <Box position={[3, 2, 3]} />
         <Surround />
         {map.map((row, i) =>
           row.map((color, j) => {
