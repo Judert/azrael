@@ -3,7 +3,6 @@ import { Player } from '@/components/canvas/Player'
 import { Roof } from '@/components/canvas/Roof'
 import { Wall } from '@/components/canvas/Wall'
 import { Physics } from '@react-three/cannon'
-import { Sky } from '@react-three/drei'
 
 export default function Level({ map }) {
   const Surround = () => {
@@ -19,8 +18,8 @@ export default function Level({ map }) {
   }
   return (
     <>
-      <Sky sunPosition={[100, 20, 100]} />
-      <ambientLight intensity={0.1} />
+      <color attach='background' args={['black']} />
+      <ambientLight intensity={0.05} />
       <Physics>
         <Roof position={[7.5, 3, 7.5]} />
         <Player />

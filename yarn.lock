@@ -4985,10 +4985,10 @@ three-stdlib@2.17.0:
     potpack "^1.0.1"
     zstddec "^0.0.2"
 
-three-stdlib@^2.15.0:
-  version "2.16.1"
-  resolved "https://registry.npmjs.org/three-stdlib/-/three-stdlib-2.16.1.tgz#3548eca5350a06e79b8e24bd7ee7877cfeab11f6"
-  integrity sha512-AuWs5OFOQfrSYYg49DF2driU9OI9AG8vS1/KBrKjQnJqW5vyn8WvhePexcSmDKgsBfAsxcXk8W/tR9uOESnr3w==
+three-stdlib@^2.17.0:
+  version "2.17.0"
+  resolved "https://registry.yarnpkg.com/three-stdlib/-/three-stdlib-2.17.0.tgz#5915b110ec6dbf07e0e653bd59889293c7b93407"
+  integrity sha512-m19X4+ajh+2EJIVcjB288LgbqTli5b8kFahJlg9oNCBfaL8geCgEoM4OUirgV0Ez6Lr58N1MPBR6LjJt7ALfKQ==
   dependencies:
     "@babel/runtime" "^7.16.7"
     "@types/offscreencanvas" "^2019.6.4"

@@ -46,6 +46,7 @@ export const Player = (props) => {
     mass: 1,
     type: 'Dynamic',
     position: [1, 2, 1],
+    radius: 0.1,
     ...props,
   }))
   const { forward, backward, left, right } = usePlayerControls()
@@ -66,7 +67,10 @@ export const Player = (props) => {
   })
   return (
     <>
-      <mesh ref={ref} />
+      <mesh ref={ref} castShadow receiveShadow>
+        {/* <sphereGeometry /> */}
+        <meshStandardMaterial color='pink' />
+      </mesh>
     </>
   )
 }
