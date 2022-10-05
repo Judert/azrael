@@ -29,8 +29,8 @@ export const Wall = (props) => {
     //   <boxGeometry args={[1, 1, 1]} />
     // </mesh>
     <mesh ref={ref} castShadow receiveShadow>
-      <boxGeometry args={[1, 3, 1]} />
-      <meshStandardMaterial color='white' />
+      <boxGeometry args={[2, 3, 2]} />
+      <meshStandardMaterial color='grey' roughness={1} />
     </mesh>
   )
 }

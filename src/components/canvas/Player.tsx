@@ -45,8 +45,6 @@ export const Player = (props) => {
   const [ref, api] = useSphere(() => ({
     mass: 1,
     type: 'Dynamic',
-    // scale: [0.1, 0.1, 0.1],
-    // position: [1, 2, 1],
     ...props,
   }))
   const { forward, backward, left, right } = usePlayerControls()
@@ -63,17 +61,13 @@ export const Player = (props) => {
       .multiplyScalar(SPEED)
       .applyEuler(camera.rotation)
     speed.fromArray(velocity.current)
-    // lock rotation
-    // api.rotation.set(0, 0, 0)
-    // set scale to 0.5
-    api.scaleOverride([0.5, 0.5, 0.5])
     api.velocity.set(direction.x, velocity.current[1], direction.z)
   })
   return (
     <>
-      <mesh ref={ref} castShadow receiveShadow>
+      <mesh ref={ref} receiveShadow>
         <sphereGeometry />
-        <meshStandardMaterial color='white' />
+        <meshStandardMaterial color='grey' roughness={0.2} />
       </mesh>
     </>
   )

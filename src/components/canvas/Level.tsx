@@ -3,7 +3,9 @@ import { Player } from '@/components/canvas/Player'
 import { Roof } from '@/components/canvas/Roof'
 import { Wall } from '@/components/canvas/Wall'
 import { Physics } from '@react-three/cannon'
+import { useDepthBuffer } from '@react-three/drei'
 import { Box } from './Box'
+import Spotlight from './Spotlight'
 
 export default function Level({ map }) {
   const Surround = () => {
@@ -11,30 +13,43 @@ export default function Level({ map }) {
     for (let i = 0; i < 18; i++) {
       for (let j = 0; j < 18; j++) {
         if (i === 0 || i === 17 || j === 0 || j === 17) {
-          walls.push(<Wall key={`${i}${j}`} position={[i - 1, 1.5, j - 1]} />)
+          walls.push(
+            <Wall key={`${i}${j}`} position={[i * 2 - 2, 1.5, j * 2 - 2]} />
+          )
         }
       }
     }
     return walls
   }
+  const depthBuffer = useDepthBuffer({ frames: 1 })
+
   return (
     <>
       <color attach='background' args={['black']} />
       {/* <ambientLight intensity={0.0005} /> */}
-      <pointLight color='white' decay={2} position={[15, 3, 15]} />
-      <Physics>
-        <Roof position={[7.5, 3, 7.5]} />
+      {/* <pointLight
+        color='white'
+        castShadow
+        decay={2}
+        distance={16}
+        intensity={0.5}
+        position={[1, 2, 1]}
+      /> */}
+      <Spotlight depthBuffer={depthBuffer} color='white' position={[1, 3, 1]} />
+      <fog attach='fog' args={['black', 0, 100]} />
+      <Physics gravity={[0, -30, 0]}>
+        <Roof position={[15, 3.5, 15]} />
         <Player position={[1, 1, 1]} />
         {/* <Box position={[3, 2, 3]} /> */}
         <Surround />
         {map.map((row, i) =>
           row.map((color, j) => {
             if (color === 'black') {
-              return <Wall key={`${i}-${j}`} position={[i, 1.5, j]} />
+              return <Wall key={`${i}-${j}`} position={[i * 2, 1.5, j * 2]} />
             }
           })
         )}
-        <Ground position={[7.5, 0, 7.5]} />
+        <Ground position={[15, 0, 15]} />
       </Physics>
     </>
   )
