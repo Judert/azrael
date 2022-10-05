@@ -76,7 +76,7 @@ export default function Map({ edit, setEdit }) {
             <button onClick={() => levelExport()}>Export</button>
           </div>
         )}
-        <div className='flex flex-col'>
+        <div className='flex flex-col border-8 border-black'>
           {map.map((row, i) => {
             return (
               <ol className='flex flex-row' key={i}>

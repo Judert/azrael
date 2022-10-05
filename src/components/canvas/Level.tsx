@@ -35,7 +35,6 @@ export default function Level({ map }) {
         intensity={1}
         position={[1, 2, 1]}
       /> */}
-      <Spotlight depthBuffer={depthBuffer} color='white' position={[3, 3, 3]} />
       <fog attach='fog' args={['black', 0, 100]} />
       <Physics gravity={[0, -30, 0]}>
         <Roof position={[15, 3.5, 15]} />
@@ -47,6 +46,14 @@ export default function Level({ map }) {
             switch (color) {
               case 'black':
                 return <Wall key={`${i}-${j}`} position={[i * 2, 1.5, j * 2]} />
+              case 'yellow':
+                return (
+                  <Spotlight
+                    depthBuffer={depthBuffer}
+                    color='white'
+                    position={[i * 2, 3, j * 2]}
+                  />
+                )
             }
           })
         )}
