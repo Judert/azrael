@@ -21,21 +21,21 @@ export default function Level({ map }) {
     }
     return walls
   }
-  const depthBuffer = useDepthBuffer({ frames: 1 })
+  const depthBuffer = useDepthBuffer()
 
   return (
     <>
       <color attach='background' args={['black']} />
-      {/* <ambientLight intensity={0.0005} /> */}
+      {/* <ambientLight intensity={0.1} /> */}
       {/* <pointLight
         color='white'
         castShadow
         decay={2}
-        distance={16}
-        intensity={0.5}
+        distance={4}
+        intensity={1}
         position={[1, 2, 1]}
       /> */}
-      <Spotlight depthBuffer={depthBuffer} color='white' position={[1, 3, 1]} />
+      <Spotlight depthBuffer={depthBuffer} color='white' position={[3, 3, 3]} />
       <fog attach='fog' args={['black', 0, 100]} />
       <Physics gravity={[0, -30, 0]}>
         <Roof position={[15, 3.5, 15]} />
@@ -44,8 +44,9 @@ export default function Level({ map }) {
         <Surround />
         {map.map((row, i) =>
           row.map((color, j) => {
-            if (color === 'black') {
-              return <Wall key={`${i}-${j}`} position={[i * 2, 1.5, j * 2]} />
+            switch (color) {
+              case 'black':
+                return <Wall key={`${i}-${j}`} position={[i * 2, 1.5, j * 2]} />
             }
           })
         )}
