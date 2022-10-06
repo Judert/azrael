@@ -23,8 +23,6 @@ export default function Spotlight({ vec = new Vector3(), ...props }) {
       anglePower={2}
       intensity={1}
       decay={2}
-      // rotate downwards
-      rotateOnAxis={[0, 1, 0]}
       {...props}
     />
   )
