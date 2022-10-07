@@ -34,5 +34,5 @@ const Scene = (props) => {
     setMap(JSON.parse(String(getCookie('1'))))
   }, [])
 
-  return <Level map={map} />
+  return <Level />
 }

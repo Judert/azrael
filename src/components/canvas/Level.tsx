@@ -2,27 +2,27 @@ import { Ground } from '@/components/canvas/Ground'
 import { Player } from '@/components/canvas/Player'
 import { Roof } from '@/components/canvas/Roof'
 import { Wall } from '@/components/canvas/Wall'
+import { MapContext } from '@/lib/context'
 import { Physics } from '@react-three/cannon'
 import { Sky, useDepthBuffer } from '@react-three/drei'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { Box } from './Box'
 import Spotlight from './Spotlight'
 
-export default function Level({ map }) {
+export default function Level() {
+  const [map, setMap] = useContext(MapContext)
   const depthBuffer = useDepthBuffer()
   const [player, setPlayer] = useState(false)
-  const [boundary, setBoundary] = useState([])
   const [physical, setPhysical] = useState([])
   const [intangible, setIntangible] = useState([])
 
   useEffect(() => {
-    let boundary = []
     let physical = []
     let intangible = []
     for (let i = 0; i < 18; i++) {
       for (let j = 0; j < 18; j++) {
         if (i === 0 || i === 17 || j === 0 || j === 17) {
-          boundary.push(
+          physical.push(
             <Wall key={`${i}${j}`} position={[i * 2, 1.5, j * 2]} />
           )
         } else {
@@ -56,7 +56,6 @@ export default function Level({ map }) {
         }
       }
     }
-    setBoundary(boundary)
     setPhysical(physical)
     setIntangible(intangible)
   }, [])
@@ -91,7 +90,6 @@ export default function Level({ map }) {
       {intangible}
       <Physics gravity={[0, -30, 0]}>
         {/* <Roof position={[17, 3.5, 17]} /> */}
-        {boundary}
         {physical}
         <Ground position={[17, 0, 17]} />
       </Physics>

@@ -1,7 +1,8 @@
 import * as THREE from 'three'
-import { useEffect, useRef, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import { useCylinder, useSphere, useBox } from '@react-three/cannon'
 import { useThree, useFrame } from '@react-three/fiber'
+import { MapContext } from '@/lib/context'
 
 const SPEED = 5
 const keys = {
@@ -47,6 +48,7 @@ export const Player = (props) => {
     type: 'Dynamic',
     ...props,
   }))
+  const [map, setMap] = useContext(MapContext)
   const { forward, backward, left, right } = usePlayerControls()
   const { camera } = useThree()
   const velocity = useRef([0, 0, 0])
@@ -62,6 +64,15 @@ export const Player = (props) => {
       .applyEuler(camera.rotation)
     speed.fromArray(velocity.current)
     api.velocity.set(direction.x, velocity.current[1], direction.z)
+
+    // get players position
+    console.log(ref.current.position.x / 2, ref.current.position.z / 2)
+
+    // setMap(
+    //   map.map((row, r) =>
+    //     row.map((color, c) => (r === i && c === j ? newColor : color))
+    //   )
+    // )
   })
   return (
     <>
