@@ -1,4 +1,4 @@
-import { Canvas } from '@react-three/fiber'
+import { Canvas, useThree } from '@react-three/fiber'
 import { PointerLockControls, Preload, softShadows } from '@react-three/drei'
 import useStore from '@/helpers/store'
 import { useEffect, useRef } from 'react'
@@ -19,6 +19,7 @@ const LCanvas = ({ children }) => {
       shadows
     >
       <PointerLockControls />
+      {/* <FrameLimiter /> */}
       {/* <AsciiRenderer invert /> */}
       <Preload all />
       {children}
@@ -27,3 +28,24 @@ const LCanvas = ({ children }) => {
 }
 
 export default LCanvas
+
+function FrameLimiter({ limit = 60 }) {
+  const { invalidate, clock, advance } = useThree()
+  useEffect(() => {
+    let delta = 0
+    const interval = 1 / limit
+    const update = () => {
+      requestAnimationFrame(update)
+      delta += clock.getDelta()
+
+      if (delta > interval) {
+        invalidate()
+        delta = delta % interval
+      }
+    }
+
+    update()
+  }, [])
+
+  return null
+}

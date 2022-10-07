@@ -17,10 +17,9 @@ export default function Spotlight({ vec = new Vector3(), ...props }) {
       castShadow
       ref={light}
       penumbra={1}
-      distance={8}
       angle={1}
       attenuation={5}
-      anglePower={2}
+      anglePower={5}
       intensity={1}
       decay={2}
       {...props}
