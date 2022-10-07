@@ -4,7 +4,13 @@ import useStore from '@/helpers/store'
 import { useEffect, useRef } from 'react'
 import AsciiRenderer from '../canvas/AsciiRenderer'
 
-softShadows()
+softShadows({
+  frustum: 3.75,
+  size: 0.3,
+  near: 9.5,
+  samples: 17,
+  rings: 11, // Rings (default: 11) must be a int
+})
 
 const LCanvas = ({ children }) => {
   const dom = useStore((state) => state.dom)
@@ -16,6 +22,9 @@ const LCanvas = ({ children }) => {
         top: 0,
       }}
       onCreated={(state) => state.events.connect(dom.current)}
+      gl={{
+        antialias: true,
+      }}
       shadows
     >
       <PointerLockControls />

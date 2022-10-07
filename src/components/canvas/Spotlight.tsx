@@ -1,6 +1,6 @@
 import { SpotLight } from '@react-three/drei'
 import { useFrame, useThree } from '@react-three/fiber'
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { Vector3 } from 'three'
 
 export default function Spotlight({ vec = new Vector3(), ...props }) {

@@ -34,7 +34,7 @@ export default function Level({ map }) {
           } else if (color === 'cyan' && !player) {
             setPlayer(true)
             physical.push(
-              <Player key={`${i}-${j}`} position={[i * 2, 1, j * 2]} />
+              <Player key={`${i}-${j}`} position={[i * 2, 2, j * 2]} />
             )
           } else if (color === 'yellow') {
             // intangible.push(
@@ -90,8 +90,8 @@ export default function Level({ map }) {
       {/* <ambientLight intensity={0.5} /> */}
       {intangible}
       <Physics gravity={[0, -30, 0]}>
-        {/* <Roof position={[16, 3.5, 16]} /> */}
-        <group>{boundary}</group>
+        {/* <Roof position={[17, 3.5, 17]} /> */}
+        {boundary}
         {physical}
         <Ground position={[17, 0, 17]} />
       </Physics>
