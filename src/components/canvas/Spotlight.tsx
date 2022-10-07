@@ -20,7 +20,7 @@ export default function Spotlight({ vec = new Vector3(), ...props }) {
       angle={1}
       attenuation={5}
       anglePower={5}
-      intensity={1}
+      distance={100}
       decay={2}
       {...props}
     />

@@ -13,7 +13,7 @@ export const Ground = (props) => {
   return (
     <mesh ref={ref} receiveShadow castShadow>
       <planeGeometry args={[36, 36]} />
-      <meshStandardMaterial
+      <meshPhysicalMaterial
         roughness={1}
         // {...texture}
         color='grey'

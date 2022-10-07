@@ -37,21 +37,21 @@ export default function Level({ map }) {
               <Player key={`${i}-${j}`} position={[i * 2, 1, j * 2]} />
             )
           } else if (color === 'yellow') {
-            intangible.push(
-              // <pointLight
-              //   color='white'
-              //   castShadow
-              //   decay={2}
-              //   intensity={1}
-              //   position={[i * 2, 3, j * 2]}
-              // />
-              <Spotlight
-                key={`${i}-${j}`}
-                depthBuffer={depthBuffer}
-                color='white'
-                position={[i * 2, 3, j * 2]}
-              />
-            )
+            // intangible.push(
+            //   // <pointLight
+            //   //   color='white'
+            //   //   castShadow
+            //   //   decay={2}
+            //   //   intensity={1}
+            //   //   position={[i * 2, 3, j * 2]}
+            //   // />
+            //   <Spotlight
+            //     key={`${i}-${j}`}
+            //     depthBuffer={depthBuffer}
+            //     color='white'
+            //     position={[i * 2, 3, j * 2]}
+            //   />
+            // )
           }
         }
       }
@@ -65,11 +65,32 @@ export default function Level({ map }) {
     <>
       <color attach='background' args={['black']} />
       <fog attach='fog' args={['black', 0, 100]} />
-      {/* <Sky sunPosition={[0, 10, 0]} /> */}
+      {/* <Sky
+        distance={450000}
+        sunPosition={[0, 1, 0]}
+        inclination={0}
+        azimuth={0.25}
+        mieCoefficient={0.005}
+        mieDirectionalG={0.8}
+        rayleigh={0.2}
+        turbidity={10}
+      /> */}
+      {/* <pointLight
+        castShadow
+        intensity={0.8}
+        decay={2}
+        color='white'
+        position={[17, 50, 17]}
+      /> */}
+      <Spotlight
+        depthBuffer={depthBuffer}
+        color='white'
+        position={[17, 17, 17]}
+      />
       {/* <ambientLight intensity={0.5} /> */}
       {intangible}
       <Physics gravity={[0, -30, 0]}>
-        <Roof position={[16, 3.5, 16]} />
+        {/* <Roof position={[16, 3.5, 16]} /> */}
         <group>{boundary}</group>
         {physical}
         <Ground position={[17, 0, 17]} />
