@@ -7,6 +7,7 @@ import { Physics } from '@react-three/cannon'
 import { Sky, useDepthBuffer } from '@react-three/drei'
 import { useContext, useEffect, useState } from 'react'
 import { Box } from './Box'
+import { Enemy } from './Enemy'
 import Spotlight from './Spotlight'
 
 export default function Level() {
@@ -36,22 +37,10 @@ export default function Level() {
             physical.push(
               <Player key={`${i}-${j}`} position={[i * 2, 2, j * 2]} />
             )
-          } else if (color === 'yellow') {
-            // intangible.push(
-            //   // <pointLight
-            //   //   color='white'
-            //   //   castShadow
-            //   //   decay={2}
-            //   //   intensity={1}
-            //   //   position={[i * 2, 3, j * 2]}
-            //   // />
-            //   <Spotlight
-            //     key={`${i}-${j}`}
-            //     depthBuffer={depthBuffer}
-            //     color='white'
-            //     position={[i * 2, 3, j * 2]}
-            //   />
-            // )
+          } else if (color === 'red') {
+            physical.push(
+              <Enemy key={`${i}-${j}`} position={[i * 2, 2, j * 2]} />
+            )
           }
         }
       }
@@ -84,7 +73,7 @@ export default function Level() {
       <Spotlight
         depthBuffer={depthBuffer}
         color='white'
-        position={[17, 17, 17]}
+        position={[17, 25, 17]}
       />
       {/* <ambientLight intensity={0.5} /> */}
       {intangible}

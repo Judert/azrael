@@ -66,7 +66,7 @@ export const Player = (props) => {
     api.velocity.set(direction.x, velocity.current[1], direction.z)
 
     // get players position
-    console.log(ref.current.position.x / 2, ref.current.position.z / 2)
+    // console.log(ref.current.position.x / 2, ref.current.position.z / 2)
 
     // setMap(
     //   map.map((row, r) =>
@@ -76,7 +76,7 @@ export const Player = (props) => {
   })
   return (
     <>
-      <mesh ref={ref} receiveShadow>
+      <mesh ref={ref} receiveShadow name='player'>
         <sphereGeometry />
         <meshStandardMaterial color='grey' roughness={0.2} />
       </mesh>
