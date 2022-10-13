@@ -7,10 +7,10 @@ import { MapContext } from '@/lib/context'
 const SPEED = 0.02
 
 const direction = new THREE.Vector3()
-const frontVector = new THREE.Vector3()
-const sideVector = new THREE.Vector3()
-const rotation = new THREE.Vector3()
-const speed = new THREE.Vector3()
+// const frontVector = new THREE.Vector3()
+// const sideVector = new THREE.Vector3()
+// const rotation = new THREE.Vector3()
+// const speed = new THREE.Vector3()
 const raycaster = new THREE.Raycaster()
 
 export const Enemy = (props) => {
@@ -19,32 +19,31 @@ export const Enemy = (props) => {
     type: 'Dynamic',
     ...props,
   }))
-  const [map, setMap] = useContext(MapContext)
-  const position = useRef([0, 0, 0])
-  useEffect(() => api.position.subscribe((p) => (position.current = p)), [])
-  const velocity = useRef([0, 0, 0])
-  useEffect(() => api.velocity.subscribe((v) => (velocity.current = v)), [])
-  const rotation = useRef([0, 0, 0])
-  useEffect(() => api.rotation.subscribe((r) => (rotation.current = r)), [])
+  // const [map, setMap] = useContext(MapContext)
+  // const position = useRef([0, 0, 0])
+  // useEffect(() => api.position.subscribe((p) => (position.current = p)), [])
+  // const velocity = useRef([0, 0, 0])
+  // useEffect(() => api.velocity.subscribe((v) => (velocity.current = v)), [])
+  // const rotation = useRef([0, 0, 0])
+  // useEffect(() => api.rotation.subscribe((r) => (rotation.current = r)), [])
   useFrame((state, delta, frame) => {
-    for (let i = 0; i < 360; i += 3) {
-      const angle = (i * Math.PI) / 180
-      const x = Math.cos(angle)
-      const z = Math.sin(angle)
-      direction.set(x, 0, z)
-      raycaster.set(ref.current.position, direction)
-      const intersects = raycaster.intersectObjects(state.scene.children)
-      if (intersects.length > 0) {
-        if (intersects[0].object.name === 'player') {
-          // api.rotation.set(rotation.current[0], angle, rotation.current[2])
-          // api.velocity.set(x * SPEED, velocity.current[1], z * SPEED)
-          // break
-          api.position.set(
-            direction.x * SPEED,
-            position.current[1],
-            direction.z * SPEED
-          )
-        }
+    const player = state.camera.position
+    const enemy = ref.current.position
+    const distance = player.distanceTo(enemy)
+    if (distance < 1) {
+      console.log('player is dead')
+    }
+    const direction = new THREE.Vector3()
+    direction.subVectors(player, enemy).normalize()
+    raycaster.set(enemy, direction)
+    const intersects = raycaster.intersectObjects(state.scene.children)
+    if (intersects.length > 0) {
+      if (intersects[0].object.name === 'player') {
+        api.rotation.set(
+          ref.current.rotation.x,
+          Math.atan2(direction.x, direction.z),
+          ref.current.rotation.z
+        )
       }
     }
   })

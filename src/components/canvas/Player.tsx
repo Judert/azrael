@@ -51,6 +51,8 @@ export const Player = (props) => {
   const [map, setMap] = useContext(MapContext)
   const { forward, backward, left, right } = usePlayerControls()
   const { camera } = useThree()
+  const position = useRef([0, 0, 0])
+  useEffect(() => api.position.subscribe((p) => (position.current = p)), [])
   const velocity = useRef([0, 0, 0])
   useEffect(() => api.velocity.subscribe((v) => (velocity.current = v)), [])
   useFrame((state) => {
@@ -64,7 +66,6 @@ export const Player = (props) => {
       .applyEuler(camera.rotation)
     speed.fromArray(velocity.current)
     api.velocity.set(direction.x, velocity.current[1], direction.z)
-
     // get players position
     // console.log(ref.current.position.x / 2, ref.current.position.z / 2)
 
