@@ -18,11 +18,11 @@ const direction = new THREE.Vector3()
 // const rotation = new THREE.Vector3()
 // const speed = new THREE.Vector3()
 const raycaster = new THREE.Raycaster()
-let player
-let playerLast
-let enemy
-let enemyLast
-let grid
+let player = null
+let playerLast = null
+let enemy = null
+let grid = null
+let path = null
 
 export const Enemy = (props) => {
   const [ref, api] = useBox(() => ({
@@ -43,6 +43,7 @@ export const Enemy = (props) => {
       })
     })
     grid = getNewGridWithMaze(grid, walls)
+    path = null
   }, [])
 
   useFrame((state, delta, frame) => {
@@ -64,7 +65,6 @@ export const Enemy = (props) => {
         )
       }
     }
-    // enemyLast = enemy
     enemy = [ref.current.position.x / 2, ref.current.position.z / 2]
     for (let i = 0; i < 16; i++) {
       for (let j = 0; j < 16; j++) {
@@ -83,33 +83,22 @@ export const Enemy = (props) => {
       }
     }
     if (
-      (playerLast !== undefined
+      (playerLast !== null
         ? !playerLast.every((e, i) => e === player[i])
         : true) &&
       grid
     ) {
-      // console.log(grid)
       const startNode = grid[enemy[0]][enemy[1]]
       const finishNode = grid[player[0]][player[1]]
       const visitedNodesInOrder = astar(grid, startNode, finishNode)
       const nodesInShortestPathOrder =
         getNodesInShortestPathOrderAstar(finishNode)
-      const path = nodesInShortestPathOrder.map((node) => {
+      path = nodesInShortestPathOrder.map((node) => {
         console.log(node.row, node.col)
         return [node.row, node.col]
       })
-      // if (path.length > 1) {
-      //   const next = path[1]
-      //   const x = next[0] - enemy[0]
-      //   const z = next[1] - enemy[1]
-      //   api.velocity.set(x * SPEED, ref.current.velocity.y, z * SPEED)
-      // }
     }
-    // const startNode = grid[enemy[0]][enemy[1]]
-    // const finishNode = grid[player[0]][player[1]]
-    // const visitedNodesInOrder = astar(grid, startNode, finishNode)
-    // const nodesInShortestPathOrder =
-    //   getNodesInShortestPathOrderAstar(finishNode)
+    // add up deltas for time? every x amount of time move position a fraction towards the next position in the path, once at that position, move to the next position in the path
   })
   return (
     <>
