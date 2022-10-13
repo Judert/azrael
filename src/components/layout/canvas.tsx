@@ -2,7 +2,7 @@ import { Canvas, useThree } from '@react-three/fiber'
 import { PointerLockControls, Preload, softShadows } from '@react-three/drei'
 import useStore from '@/helpers/store'
 import { useEffect, useRef } from 'react'
-import AsciiRenderer from '../canvas/AsciiRenderer'
+import AsciiRenderer from '@/lib/AsciiRenderer'
 
 softShadows({
   frustum: 3.75,
