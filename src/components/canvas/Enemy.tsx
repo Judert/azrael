@@ -13,27 +13,25 @@ import {
 const SPEED = 0.02
 
 const direction = new THREE.Vector3()
-// const frontVector = new THREE.Vector3()
-// const sideVector = new THREE.Vector3()
-// const rotation = new THREE.Vector3()
-// const speed = new THREE.Vector3()
 const raycaster = new THREE.Raycaster()
-let player = null
-let playerLast = null
-let enemy = null
-let grid = null
-let path = null
 
 export const Enemy = (props) => {
   const [ref, api] = useBox(() => ({
-    mass: 1,
-    type: 'Dynamic',
+    // mass: 1,
+    type: 'Kinematic',
     ...props,
   }))
   const [map, setMap] = useContext(MapContext)
+  const position = useRef([0, 0, 0])
+  const rotation = useRef([0, 0, 0])
+  const player = useRef(null)
+  const playerLast = useRef(null)
+  const grid = useRef(null)
+  const path = useRef(null)
+  const time = useRef(0)
 
   useEffect(() => {
-    grid = getInitialGrid(16, 16)
+    grid.current = getInitialGrid(16, 16)
     let walls = []
     map.forEach((row, y) => {
       row.forEach((cell, x) => {
@@ -42,16 +40,18 @@ export const Enemy = (props) => {
         }
       })
     })
-    grid = getNewGridWithMaze(grid, walls)
-    path = null
+    grid.current = getNewGridWithMaze(grid.current, walls)
+    api.position.subscribe((p) => (position.current = p))
+    api.rotation.subscribe((p) => (rotation.current = p))
   }, [])
 
   useFrame((state, delta, frame) => {
     // look at player
     const playerPos = state.camera.position
-    const enemyPos = ref.current.position
+    const enemyPos = position.current
     if (playerPos.distanceTo(enemyPos) < 1) {
       console.log('playerPos is dead')
+      return
     }
     direction.subVectors(playerPos, enemyPos).normalize()
     raycaster.set(enemyPos, direction)
@@ -59,13 +59,13 @@ export const Enemy = (props) => {
     if (intersects.length > 0) {
       if (intersects[0].object.name === 'player') {
         api.rotation.set(
-          ref.current.rotation.x,
+          rotation.current[0],
           Math.atan2(direction.x, direction.z),
-          ref.current.rotation.z
+          rotation.current[2]
         )
       }
     }
-    enemy = [ref.current.position.x / 2, ref.current.position.z / 2]
+    // get block player is in
     for (let i = 0; i < 16; i++) {
       for (let j = 0; j < 16; j++) {
         if (
@@ -76,35 +76,84 @@ export const Enemy = (props) => {
             state.camera.position.z > j * 2 - 1 &&
             state.camera.position.z < j * 2 + 1
           ) {
-            playerLast = player
-            player = [i, j]
+            playerLast.current = player.current
+            player.current = [i, j]
           }
         }
       }
     }
+    // if the player is in a new block, find a new path
     if (
       (playerLast !== null
-        ? !playerLast.every((e, i) => e === player[i])
+        ? playerLast.current[0] !== player.current[0] ||
+          playerLast.current[1] !== player.current[1]
         : true) &&
-      grid
+      grid.current
     ) {
-      const startNode = grid[enemy[0]][enemy[1]]
-      const finishNode = grid[player[0]][player[1]]
-      const visitedNodesInOrder = astar(grid, startNode, finishNode)
+      const startNode =
+        grid.current[position.current[0] / 2][position.current[2] / 2]
+      const finishNode = grid.current[player.current[0]][player.current[1]]
+      const visitedNodesInOrder = astar(grid.current, startNode, finishNode)
       const nodesInShortestPathOrder =
         getNodesInShortestPathOrderAstar(finishNode)
-      path = nodesInShortestPathOrder.map((node) => {
-        console.log(node.row, node.col)
+      path.current = nodesInShortestPathOrder.map((node) => {
         return [node.row, node.col]
       })
+      path.current.shift()
+      path.current.pop()
+      console.log(path[0])
     }
-    // add up deltas for time? every x amount of time move position a fraction towards the next position in the path, once at that position, move to the next position in the path
+
+    // if (path.current && path.current[0]) {
+    //   const nextPos = [path.current[0][0] * 2, path.current[0][1] * 2]
+    //   const enemyPos = [position.current[0], position.current[2]]
+    //   const deltaPos = [nextPos[0] - enemyPos[0], nextPos[1] - enemyPos[1]]
+    //   if (!(deltaPos[0] === 0 && deltaPos[1] === 0)) {
+    //     // const unitDeltaPos = [
+    //     //   deltaPos[0] / Math.sqrt(deltaPos[0] ** 2 + deltaPos[1] ** 2),
+    //     //   deltaPos[1] / Math.sqrt(deltaPos[0] ** 2 + deltaPos[1] ** 2),
+    //     // ]
+    //     // const moveNextX = deltaPos[0] <= unitDeltaPos[0] * delta
+    //     // const moveNextZ = deltaPos[1] <= unitDeltaPos[1] * delta
+    //     // console.log(
+    //     //   enemyPos,
+    //     //   nextPos,
+    //     //   deltaPos,
+    //     //   unitDeltaPos,
+    //     //   moveNextX,
+    //     //   moveNextZ
+    //     // )
+    //     // api.position.set(
+    //     //   position.current[0] + moveNextX
+    //     //     ? deltaPos[0]
+    //     //     : unitDeltaPos[0] * delta,
+    //     //   position.current[1],
+    //     //   position.current[2] + moveNextZ
+    //     //     ? deltaPos[1]
+    //     //     : unitDeltaPos[1] * delta
+    //     // )
+    //     // if (moveNextX && moveNextZ) {
+    //     //   path.current.shift()
+    //     // }
+    //     // console.log(deltaPos)
+    //     api.position.set(
+    //       position.current[0] + deltaPos[0],
+    //       position.current[1],
+    //       position.current[2] + deltaPos[1]
+    //     )
+    //     time.current += delta
+    //     if (time.current > 0.5) {
+    //       path.current.shift()
+    //       time.current = 0
+    //     }
+    //   }
+    // }
   })
   return (
     <>
       <mesh ref={ref} receiveShadow castShadow>
         <boxGeometry />
-        <meshStandardMaterial color='grey' roughness={0.2} />
+        <meshStandardMaterial color='red' roughness={0.2} />
       </mesh>
     </>
   )

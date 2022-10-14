@@ -39,7 +39,7 @@ export default function Level() {
             )
           } else if (color === 'red') {
             physical.push(
-              <Enemy key={`${i}-${j}`} position={[i * 2, 2, j * 2]} />
+              <Enemy key={`${i}-${j}`} position={[i * 2, 1, j * 2]} />
             )
           }
         }
