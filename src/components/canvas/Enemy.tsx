@@ -33,6 +33,12 @@ export const Enemy = (props) => {
   })
 
   useEffect(() => {
+    gridReset()
+    api.position.subscribe((p) => state.current.position.set(p[0], p[1], p[2]))
+    api.rotation.subscribe((r) => state.current.rotation.set(r[0], r[1], r[2]))
+  }, [])
+
+  const gridReset = () => {
     state.current.grid = getInitialGrid(16, 16)
     let walls = []
     map.forEach((row, y) => {
@@ -43,9 +49,7 @@ export const Enemy = (props) => {
       })
     })
     state.current.grid = getNewGridWithMaze(state.current.grid, walls)
-    api.position.subscribe((p) => state.current.position.set(p[0], p[1], p[2]))
-    api.rotation.subscribe((r) => state.current.rotation.set(r[0], r[1], r[2]))
-  }, [])
+  }
 
   useFrame((world, delta, frame) => {
     // only start if the useEffect has triggered
@@ -68,88 +72,71 @@ export const Enemy = (props) => {
             )
           }
         }
-        // get block player is in
-        for (let i = 0; i < 16; i++) {
-          for (let j = 0; j < 16; j++) {
-            if (player.x > i * 2 - 1 && player.x < i * 2 + 1) {
-              if (player.z > j * 2 - 1 && player.z < j * 2 + 1) {
-                state.current.playerLast = state.current.player
-                state.current.player = [i, j]
+        state.current.time += delta
+        if (state.current.time > 0.5) {
+          state.current.time = 0
+          // get block player is in
+          find: for (let i = 1; i <= 16; i++) {
+            for (let j = 1; j <= 16; j++) {
+              if (player.x >= i * 2 - 1 && player.x < i * 2 + 1) {
+                if (player.z >= j * 2 - 1 && player.z < j * 2 + 1) {
+                  state.current.playerLast = state.current.player
+                  state.current.player = [i - 1, j - 1]
+                  break find
+                }
               }
             }
           }
-        }
-        // if the player is in a new block, find a new path
-        if (
-          state.current.playerLast !== null
-            ? state.current.playerLast[0] !== state.current.player[0] ||
-              state.current.playerLast[1] !== state.current.player[1]
-            : true
-        ) {
-          const startNode = state.current.grid[enemy.x / 2][enemy.z / 2]
-          const finishNode =
-            state.current.grid[state.current.player[0]][state.current.player[1]]
-          const visitedNodesInOrder = astar(
-            state.current.grid,
-            startNode,
-            finishNode
-          )
-          const nodesInShortestPathOrder =
-            getNodesInShortestPathOrderAstar(finishNode)
-          state.current.path = nodesInShortestPathOrder.map((node) => {
-            return [node.row, node.col]
-          })
-          state.current.path.shift()
-          state.current.path.pop()
-          console.log(state.current.path[0])
+          // if the player is in a new block, find a new path
+          if (
+            state.current.playerLast !== null
+              ? state.current.playerLast[0] !== state.current.player[0] ||
+                state.current.playerLast[1] !== state.current.player[1]
+              : true
+          ) {
+            gridReset()
+            const startNode =
+              state.current.grid[enemy.x / 2 - 1][enemy.z / 2 - 1]
+            const finishNode =
+              state.current.grid[state.current.player[0]][
+                state.current.player[1]
+              ]
+            if (startNode !== finishNode) {
+              const visitedNodesInOrder = astar(
+                state.current.grid,
+                startNode,
+                finishNode
+              )
+              const nodesInShortestPathOrder =
+                getNodesInShortestPathOrderAstar(finishNode)
+              state.current.path = nodesInShortestPathOrder.map((node) => {
+                return [node.row, node.col]
+              })
+              state.current.path.shift()
+              state.current.path.pop()
+            }
+          }
+          // if there is a path, move towards the next block
+          if (state.current.path && state.current.path[0]) {
+            const nextPos = [
+              (state.current.path[0][0] + 1) * 2,
+              (state.current.path[0][1] + 1) * 2,
+            ]
+            const enemyPos = [enemy.x, enemy.z]
+            const deltaPos = [
+              nextPos[0] - enemyPos[0],
+              nextPos[1] - enemyPos[1],
+            ]
+            api.position.set(
+              enemy.x + deltaPos[0],
+              enemy.y,
+              enemy.z + deltaPos[1]
+            )
+            state.current.path.shift()
+          }
         }
       }
     }
-
-    // if (path.current && path.current[0]) {
-    //   const nextPos = [path.current[0][0] * 2, path.current[0][1] * 2]
-    //   const enemyPos = [position.current[0], position.current[2]]
-    //   const deltaPos = [nextPos[0] - enemyPos[0], nextPos[1] - enemyPos[1]]
-    //   if (!(deltaPos[0] === 0 && deltaPos[1] === 0)) {
-    //     // const unitDeltaPos = [
-    //     //   deltaPos[0] / Math.sqrt(deltaPos[0] ** 2 + deltaPos[1] ** 2),
-    //     //   deltaPos[1] / Math.sqrt(deltaPos[0] ** 2 + deltaPos[1] ** 2),
-    //     // ]
-    //     // const moveNextX = deltaPos[0] <= unitDeltaPos[0] * delta
-    //     // const moveNextZ = deltaPos[1] <= unitDeltaPos[1] * delta
-    //     // console.log(
-    //     //   enemyPos,
-    //     //   nextPos,
-    //     //   deltaPos,
-    //     //   unitDeltaPos,
-    //     //   moveNextX,
-    //     //   moveNextZ
-    //     // )
-    //     // api.position.set(
-    //     //   position.current[0] + moveNextX
-    //     //     ? deltaPos[0]
-    //     //     : unitDeltaPos[0] * delta,
-    //     //   position.current[1],
-    //     //   position.current[2] + moveNextZ
-    //     //     ? deltaPos[1]
-    //     //     : unitDeltaPos[1] * delta
-    //     // )
-    //     // if (moveNextX && moveNextZ) {
-    //     //   path.current.shift()
-    //     // }
-    //     // console.log(deltaPos)
-    //     api.position.set(
-    //       position.current[0] + deltaPos[0],
-    //       position.current[1],
-    //       position.current[2] + deltaPos[1]
-    //     )
-    //     time.current += delta
-    //     if (time.current > 0.5) {
-    //       path.current.shift()
-    //       time.current = 0
-    //     }
-    //   }
-    // }
   })
   return (
     <>
