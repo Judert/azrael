@@ -5,8 +5,9 @@ import { Wall } from '@/components/canvas/Wall'
 import { MapContext } from '@/lib/context'
 import { Physics } from '@react-three/cannon'
 import { Sky, useDepthBuffer } from '@react-three/drei'
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import { Box } from './Box'
+import { Cloth } from './Cloth'
 import { Enemy } from './Enemy'
 import Spotlight from './Spotlight'
 
@@ -16,6 +17,7 @@ export default function Level() {
   const [player, setPlayer] = useState(false)
   const [physical, setPhysical] = useState([])
   const [intangible, setIntangible] = useState([])
+  const cloth = useRef()
 
   useEffect(() => {
     let physical = []
@@ -47,6 +49,7 @@ export default function Level() {
     }
     setPhysical(physical)
     setIntangible(intangible)
+    cloth.current.setPosition(8, 8, 8)
   }, [])
 
   return (
@@ -77,7 +80,14 @@ export default function Level() {
       />
       {/* <ambientLight intensity={0.5} /> */}
       {intangible}
-      <Physics gravity={[0, -30, 0]}>
+      <Physics iterations={20} gravity={[0, -30, 0]}>
+        <Cloth
+          ref={cloth}
+          width={4}
+          height={4}
+          resolutionX={4}
+          resolutionY={4}
+        />
         {/* <Roof position={[17, 3.5, 17]} /> */}
         {physical}
         <Ground position={[17, 0, 17]} />
