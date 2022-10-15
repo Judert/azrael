@@ -41,8 +41,8 @@ export const Enemy = (props) => {
   const gridReset = () => {
     state.current.grid = getInitialGrid(16, 16)
     let walls = []
-    map.forEach((row, y) => {
-      row.forEach((cell, x) => {
+    map.forEach((row, x) => {
+      row.forEach((cell, y) => {
         if (cell === 'black') {
           walls.push([x, y])
         }
