@@ -22,16 +22,18 @@ export const Enemy = (props) => {
     ...props,
   }))
   const [map, setMap] = useContext(MapContext)
-  const position = useRef([0, 0, 0])
-  const rotation = useRef([0, 0, 0])
-  const player = useRef(null)
-  const playerLast = useRef(null)
-  const grid = useRef(null)
-  const path = useRef(null)
-  const time = useRef(0)
+  const state = useRef({
+    position: new THREE.Vector3(),
+    rotation: new THREE.Vector3(),
+    player: null,
+    grid: null,
+    path: null,
+    playerLast: null,
+    time: 0,
+  })
 
   useEffect(() => {
-    grid.current = getInitialGrid(16, 16)
+    state.current.grid = getInitialGrid(16, 16)
     let walls = []
     map.forEach((row, y) => {
       row.forEach((cell, x) => {
@@ -40,68 +42,68 @@ export const Enemy = (props) => {
         }
       })
     })
-    grid.current = getNewGridWithMaze(grid.current, walls)
-    api.position.subscribe((p) => (position.current = p))
-    api.rotation.subscribe((p) => (rotation.current = p))
+    state.current.grid = getNewGridWithMaze(state.current.grid, walls)
+    api.position.subscribe((p) => state.current.position.set(p[0], p[1], p[2]))
+    api.rotation.subscribe((r) => state.current.rotation.set(r[0], r[1], r[2]))
   }, [])
 
-  useFrame((state, delta, frame) => {
-    // look at player
-    const playerPos = state.camera.position
-    const enemyPos = position.current
-    if (playerPos.distanceTo(enemyPos) < 1) {
-      console.log('playerPos is dead')
-      return
-    }
-    direction.subVectors(playerPos, enemyPos).normalize()
-    raycaster.set(enemyPos, direction)
-    const intersects = raycaster.intersectObjects(state.scene.children)
-    if (intersects.length > 0) {
-      if (intersects[0].object.name === 'player') {
-        api.rotation.set(
-          rotation.current[0],
-          Math.atan2(direction.x, direction.z),
-          rotation.current[2]
-        )
-      }
-    }
-    // get block player is in
-    for (let i = 0; i < 16; i++) {
-      for (let j = 0; j < 16; j++) {
-        if (
-          state.camera.position.x > i * 2 - 1 &&
-          state.camera.position.x < i * 2 + 1
-        ) {
-          if (
-            state.camera.position.z > j * 2 - 1 &&
-            state.camera.position.z < j * 2 + 1
-          ) {
-            playerLast.current = player.current
-            player.current = [i, j]
+  useFrame((world, delta, frame) => {
+    // only start if the useEffect has triggered
+    if (state.current.position.x !== 0 && state.current.position.z !== 0) {
+      // look at player
+      const player = world.camera.position
+      const enemy = state.current.position
+      if (player.distanceTo(enemy) < 1) {
+        console.log('player is dead')
+      } else {
+        direction.subVectors(player, enemy).normalize()
+        raycaster.set(enemy, direction)
+        const intersects = raycaster.intersectObjects(world.scene.children)
+        if (intersects.length > 0) {
+          if (intersects[0].object.name === 'player') {
+            api.rotation.set(
+              state.current.rotation.x,
+              Math.atan2(direction.x, direction.z),
+              state.current.rotation.z
+            )
           }
         }
+        // get block player is in
+        for (let i = 0; i < 16; i++) {
+          for (let j = 0; j < 16; j++) {
+            if (player.x > i * 2 - 1 && player.x < i * 2 + 1) {
+              if (player.z > j * 2 - 1 && player.z < j * 2 + 1) {
+                state.current.playerLast = state.current.player
+                state.current.player = [i, j]
+              }
+            }
+          }
+        }
+        // if the player is in a new block, find a new path
+        if (
+          state.current.playerLast !== null
+            ? state.current.playerLast[0] !== state.current.player[0] ||
+              state.current.playerLast[1] !== state.current.player[1]
+            : true
+        ) {
+          const startNode = state.current.grid[enemy.x / 2][enemy.z / 2]
+          const finishNode =
+            state.current.grid[state.current.player[0]][state.current.player[1]]
+          const visitedNodesInOrder = astar(
+            state.current.grid,
+            startNode,
+            finishNode
+          )
+          const nodesInShortestPathOrder =
+            getNodesInShortestPathOrderAstar(finishNode)
+          state.current.path = nodesInShortestPathOrder.map((node) => {
+            return [node.row, node.col]
+          })
+          state.current.path.shift()
+          state.current.path.pop()
+          console.log(state.current.path[0])
+        }
       }
-    }
-    // if the player is in a new block, find a new path
-    if (
-      (playerLast !== null
-        ? playerLast.current[0] !== player.current[0] ||
-          playerLast.current[1] !== player.current[1]
-        : true) &&
-      grid.current
-    ) {
-      const startNode =
-        grid.current[position.current[0] / 2][position.current[2] / 2]
-      const finishNode = grid.current[player.current[0]][player.current[1]]
-      const visitedNodesInOrder = astar(grid.current, startNode, finishNode)
-      const nodesInShortestPathOrder =
-        getNodesInShortestPathOrderAstar(finishNode)
-      path.current = nodesInShortestPathOrder.map((node) => {
-        return [node.row, node.col]
-      })
-      path.current.shift()
-      path.current.pop()
-      console.log(path[0])
     }
 
     // if (path.current && path.current[0]) {
