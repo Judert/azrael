@@ -9,12 +9,12 @@ export const Walls = ({ positions }) => {
 
 export const Wall = (props) => {
   const [ref] = useBox(() => ({ type: 'Static', ...props }))
-  const texture = useTexture({
-    map: './assets/ground/diff.jpg',
-    normalMap: './assets/ground/norm.jpeg',
-    roughnessMap: './assets/ground/rough.jpg',
-    displacementMap: './assets/ground/disp.png',
-  })
+  // const texture = useTexture({
+  //   map: './assets/ground/diff.jpg',
+  //   normalMap: './assets/ground/norm.jpeg',
+  //   roughnessMap: './assets/ground/rough.jpg',
+  //   displacementMap: './assets/ground/disp.png',
+  // })
   return (
     // <mesh ref={ref} receiveShadow castShadow>
     //   {[...Array(6)].map((side, index) => (

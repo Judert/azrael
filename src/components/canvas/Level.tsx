@@ -5,10 +5,10 @@ import { Wall } from '@/components/canvas/Wall'
 import { MapContext } from '@/lib/context'
 import { Physics } from '@react-three/cannon'
 import { Sky, useDepthBuffer } from '@react-three/drei'
-import { useContext, useEffect, useRef, useState } from 'react'
+import { useContext, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Box } from './Box'
 import { Enemy } from './Enemy'
-import { Fragment } from './Fragment'
+import Fragment from './Fragment'
 import Spotlight from './Spotlight'
 
 export default function Level() {
@@ -47,10 +47,7 @@ export default function Level() {
               <Fragment
                 key={`${i}-${j}`}
                 position={[i * 2, 1.5, j * 2]}
-                color='white'
-                amount={50}
-                emissive='green'
-                glow='lightgreen'
+                scale={[0.5, 1, 0.5]}
               />
             )
           }

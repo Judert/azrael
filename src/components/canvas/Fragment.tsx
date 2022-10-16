@@ -1,84 +1,74 @@
 import * as THREE from 'three'
-import { Billboard, Shadow, Sparkles } from '@react-three/drei'
-import { LayerMaterial, Depth } from 'lamina'
+import { Billboard, Edges, Shadow, Sparkles, useGLTF } from '@react-three/drei'
+import { LayerMaterial, Depth, Fresnel } from 'lamina'
+import { useLayoutEffect, useRef } from 'react'
+import { applyProps, useFrame } from '@react-three/fiber'
 
-export const Fragment = ({
-  size = 1,
-  amount = 50,
-  color = 'white',
-  emissive,
-  glow,
-  ...props
-}) => (
-  <mesh {...props}>
-    <sphereGeometry args={[size, 64, 64]} />
-    <meshPhysicalMaterial
-      roughness={0}
-      color={color}
-      emissive={emissive || color}
-      envMapIntensity={0.2}
-    />
-    <Glow scale={size * 1.2} near={-25} color={glow || emissive || color} />
-    <Sparkles count={amount} scale={size * 2} size={6} speed={0.4} />
-    <Shadow
-      rotation={[-Math.PI / 2, 0, 0]}
-      scale={size}
-      position={[0, -size, 0]}
-      color={emissive}
-      opacity={0.5}
-    />
-  </mesh>
-)
+const gradient = 0.7
 
-const Glow = ({ color, scale = 0.5, near = -2, far = 1.4 }) => (
-  <Billboard>
-    <mesh>
-      <circleGeometry args={[2 * scale, 16]} />
-      <LayerMaterial
-        transparent
-        depthWrite={false}
-        blending={THREE.CustomBlending}
-        blendEquation={THREE.AddEquation}
-        blendSrc={THREE.SrcAlphaFactor}
-        blendDst={THREE.DstAlphaFactor}
-      >
+export default function Fragment(props) {
+  const ref = useRef()
+  const { nodes } = useGLTF('./assets/fragment.glb')
+  console.log(nodes)
+
+  // Animate gradient
+  useFrame((state) => {
+    const sin = Math.sin(state.clock.elapsedTime / 2)
+    const cos = Math.cos(state.clock.elapsedTime / 2)
+    ref.current.layers[0].origin.set(cos / 2, 0, 0)
+    ref.current.layers[1].origin.set(cos, sin, cos)
+    ref.current.layers[2].origin.set(sin, cos, sin)
+    ref.current.layers[3].origin.set(cos, sin, cos)
+  })
+
+  return (
+    <mesh {...props} geometry={nodes.imagetostl_mesh.modelViewMatrix}>
+      <LayerMaterial ref={ref} toneMapped={false}>
         <Depth
-          colorA={color}
+          colorA='#ff0080'
           colorB='black'
           alpha={1}
           mode='normal'
-          near={near * scale}
-          far={far * scale}
+          near={0.5 * gradient}
+          far={0.5}
           origin={[0, 0, 0]}
         />
         <Depth
-          colorA={color}
-          colorB='black'
-          alpha={0.5}
-          mode='add'
-          near={-40 * scale}
-          far={far * 1.2 * scale}
-          origin={[0, 0, 0]}
-        />
-        <Depth
-          colorA={color}
-          colorB='black'
+          colorA='blue'
+          colorB='#f7b955'
           alpha={1}
           mode='add'
-          near={-15 * scale}
-          far={far * 0.7 * scale}
-          origin={[0, 0, 0]}
+          near={2 * gradient}
+          far={2}
+          origin={[0, 1, 1]}
         />
         <Depth
-          colorA={color}
-          colorB='black'
+          colorA='green'
+          colorB='#f7b955'
           alpha={1}
           mode='add'
-          near={-10 * scale}
-          far={far * 0.68 * scale}
-          origin={[0, 0, 0]}
+          near={3 * gradient}
+          far={3}
+          origin={[0, 1, -1]}
+        />
+        <Depth
+          colorA='white'
+          colorB='red'
+          alpha={1}
+          mode='overlay'
+          near={1.5 * gradient}
+          far={1.5}
+          origin={[1, -1, -1]}
+        />
+        <Fresnel
+          mode='add'
+          color='white'
+          intensity={0.5}
+          power={1.5}
+          bias={0.05}
         />
       </LayerMaterial>
+      <Edges color='white' />
     </mesh>
-  </Billboard>
-)
+  )
+}
