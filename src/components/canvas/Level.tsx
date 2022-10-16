@@ -7,7 +7,6 @@ import { Physics } from '@react-three/cannon'
 import { Sky, useDepthBuffer } from '@react-three/drei'
 import { useContext, useEffect, useRef, useState } from 'react'
 import { Box } from './Box'
-import { Cloth } from './Cloth'
 import { Enemy } from './Enemy'
 import Spotlight from './Spotlight'
 
@@ -17,7 +16,6 @@ export default function Level() {
   const [player, setPlayer] = useState(false)
   const [physical, setPhysical] = useState([])
   const [intangible, setIntangible] = useState([])
-  const cloth = useRef()
 
   useEffect(() => {
     let physical = []
@@ -49,46 +47,19 @@ export default function Level() {
     }
     setPhysical(physical)
     setIntangible(intangible)
-    cloth.current.setPosition(8, 8, 8)
   }, [])
 
   return (
     <>
       <color attach='background' args={['black']} />
       <fog attach='fog' args={['black', 0, 100]} />
-      {/* <Sky
-        distance={450000}
-        sunPosition={[0, 1, 0]}
-        inclination={0}
-        azimuth={0.25}
-        mieCoefficient={0.005}
-        mieDirectionalG={0.8}
-        rayleigh={0.2}
-        turbidity={10}
-      /> */}
-      {/* <pointLight
-        castShadow
-        intensity={0.8}
-        decay={2}
-        color='white'
-        position={[17, 50, 17]}
-      /> */}
       <Spotlight
         depthBuffer={depthBuffer}
         color='white'
         position={[17, 25, 17]}
       />
-      {/* <ambientLight intensity={0.5} /> */}
       {intangible}
-      <Physics iterations={20} gravity={[0, -30, 0]}>
-        <Cloth
-          ref={cloth}
-          width={4}
-          height={4}
-          resolutionX={4}
-          resolutionY={4}
-        />
-        {/* <Roof position={[17, 3.5, 17]} /> */}
+      <Physics gravity={[0, -30, 0]}>
         {physical}
         <Ground position={[17, 0, 17]} />
       </Physics>

@@ -51,12 +51,50 @@ export const Enemy = (props) => {
     state.current.grid = getNewGridWithMaze(state.current.grid, walls)
   }
 
+  const getPath = (index) => {
+    gridReset()
+    const startNode =
+      state.current.grid[state.current.position.x / 2 - 1][
+        state.current.position.z / 2 - 1
+      ]
+    const finishNode = state.current.grid[index[0]][index[1]]
+    if (startNode !== finishNode) {
+      const visitedNodesInOrder = astar(
+        state.current.grid,
+        startNode,
+        finishNode
+      )
+      const nodesInShortestPathOrder =
+        getNodesInShortestPathOrderAstar(finishNode)
+      state.current.path = nodesInShortestPathOrder.map((node) => {
+        return [node.row, node.col]
+      })
+      state.current.path.shift()
+      state.current.path.pop()
+    }
+  }
+
+  const getPlayerBlock = (player) => {
+    find: for (let i = 1; i <= 16; i++) {
+      for (let j = 1; j <= 16; j++) {
+        if (player.x >= i * 2 - 1 && player.x < i * 2 + 1) {
+          if (player.z >= j * 2 - 1 && player.z < j * 2 + 1) {
+            state.current.playerLast = state.current.player
+            state.current.player = [i - 1, j - 1]
+            break find
+          }
+        }
+      }
+    }
+  }
+
   useFrame((world, delta, frame) => {
     // only start if the useEffect has triggered
     if (state.current.position.x !== 0 && state.current.position.z !== 0) {
       // look at player
       const player = world.camera.position
       const enemy = state.current.position
+      let seen = false
       if (player.distanceTo(enemy) < 1) {
         console.log('player is dead')
       } else {
@@ -70,53 +108,39 @@ export const Enemy = (props) => {
               Math.atan2(direction.x, direction.z),
               state.current.rotation.z
             )
+            seen = true
           }
         }
         state.current.time += delta
         if (state.current.time > 0.5) {
           state.current.time = 0
           // get block player is in
-          find: for (let i = 1; i <= 16; i++) {
-            for (let j = 1; j <= 16; j++) {
-              if (player.x >= i * 2 - 1 && player.x < i * 2 + 1) {
-                if (player.z >= j * 2 - 1 && player.z < j * 2 + 1) {
-                  state.current.playerLast = state.current.player
-                  state.current.player = [i - 1, j - 1]
-                  break find
-                }
-              }
+          if (seen) {
+            getPlayerBlock(player)
+            // if the player is in a new block, find a new path
+            if (
+              state.current.playerLast
+                ? state.current.playerLast[0] !== state.current.player[0] ||
+                  state.current.playerLast[1] !== state.current.player[1]
+                : true
+            ) {
+              getPath(state.current.player)
             }
-          }
-          // if the player is in a new block, find a new path
-          if (
-            state.current.playerLast !== null
-              ? state.current.playerLast[0] !== state.current.player[0] ||
-                state.current.playerLast[1] !== state.current.player[1]
-              : true
-          ) {
-            gridReset()
-            const startNode =
-              state.current.grid[enemy.x / 2 - 1][enemy.z / 2 - 1]
-            const finishNode =
-              state.current.grid[state.current.player[0]][
-                state.current.player[1]
-              ]
-            if (startNode !== finishNode) {
-              const visitedNodesInOrder = astar(
-                state.current.grid,
-                startNode,
-                finishNode
-              )
-              const nodesInShortestPathOrder =
-                getNodesInShortestPathOrderAstar(finishNode)
-              state.current.path = nodesInShortestPathOrder.map((node) => {
-                return [node.row, node.col]
-              })
-              state.current.path.shift()
-              state.current.path.pop()
+          } else if (!(state.current.path && state.current.path[0])) {
+            // generate random x and y that arent walls or keys or exits
+            let x = Math.floor(Math.random() * 16)
+            let y = Math.floor(Math.random() * 16)
+            while (
+              map[x][y] === 'black' ||
+              map[x][y] === 'green' ||
+              map[x][y] === 'hotpink'
+            ) {
+              x = Math.floor(Math.random() * 16)
+              y = Math.floor(Math.random() * 16)
             }
+            getPath([x, y])
           }
-          // if there is a path, move towards the next block
+          // move towards the next block
           if (state.current.path && state.current.path[0]) {
             const nextPos = [
               (state.current.path[0][0] + 1) * 2,
@@ -134,6 +158,11 @@ export const Enemy = (props) => {
             )
             state.current.path.shift()
           }
+          getPlayerBlock(player)
+          console.log(state.current.player, [
+            state.current.position.x / 2 - 1,
+            state.current.position.z / 2 - 1,
+          ])
         }
       }
     }
