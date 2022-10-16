@@ -28,17 +28,16 @@ export const Enemy = (props) => {
     player: null,
     grid: null,
     path: null,
-    playerLast: null,
     time: 0,
   })
 
   useEffect(() => {
-    gridReset()
+    resetGrid()
     api.position.subscribe((p) => state.current.position.set(p[0], p[1], p[2]))
     api.rotation.subscribe((r) => state.current.rotation.set(r[0], r[1], r[2]))
   }, [])
 
-  const gridReset = () => {
+  const resetGrid = () => {
     state.current.grid = getInitialGrid(16, 16)
     let walls = []
     map.forEach((row, x) => {
@@ -52,7 +51,7 @@ export const Enemy = (props) => {
   }
 
   const getPath = (index) => {
-    gridReset()
+    resetGrid()
     const startNode =
       state.current.grid[state.current.position.x / 2 - 1][
         state.current.position.z / 2 - 1
@@ -75,13 +74,12 @@ export const Enemy = (props) => {
   }
 
   const getPlayerBlock = (player) => {
-    find: for (let i = 1; i <= 16; i++) {
+    for (let i = 1; i <= 16; i++) {
       for (let j = 1; j <= 16; j++) {
         if (player.x >= i * 2 - 1 && player.x < i * 2 + 1) {
           if (player.z >= j * 2 - 1 && player.z < j * 2 + 1) {
-            state.current.playerLast = state.current.player
             state.current.player = [i - 1, j - 1]
-            break find
+            return
           }
         }
       }
@@ -117,15 +115,7 @@ export const Enemy = (props) => {
           // get block player is in
           if (seen) {
             getPlayerBlock(player)
-            // if the player is in a new block, find a new path
-            if (
-              state.current.playerLast
-                ? state.current.playerLast[0] !== state.current.player[0] ||
-                  state.current.playerLast[1] !== state.current.player[1]
-                : true
-            ) {
-              getPath(state.current.player)
-            }
+            getPath(state.current.player)
           } else if (!(state.current.path && state.current.path[0])) {
             // generate random x and y that arent walls or keys or exits
             let x = Math.floor(Math.random() * 16)

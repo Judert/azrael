@@ -1,10 +1,10 @@
 export const Objects = Object.freeze({
-  Blank: Symbol('white'),
+  Empty: Symbol('white'),
   Wall: Symbol('black'),
-  Light: Symbol('yellow'),
-  Locker: Symbol('blue'),
-  Key: Symbol('hotpink'),
-  Exit: Symbol('green'),
+  // Light: Symbol('yellow'),
+  // Locker: Symbol('blue'),
+  Fragment: Symbol('hotpink'),
+  Beacon: Symbol('green'),
   Player: Symbol('cyan'),
   Enemy: Symbol('red'),
 })

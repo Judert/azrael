@@ -8,6 +8,7 @@ import { Sky, useDepthBuffer } from '@react-three/drei'
 import { useContext, useEffect, useRef, useState } from 'react'
 import { Box } from './Box'
 import { Enemy } from './Enemy'
+import { Fragment } from './Fragment'
 import Spotlight from './Spotlight'
 
 export default function Level() {
@@ -40,6 +41,17 @@ export default function Level() {
           } else if (color === 'red') {
             physical.push(
               <Enemy key={`${i}-${j}`} position={[i * 2, 1, j * 2]} />
+            )
+          } else if (color === 'hotpink') {
+            intangible.push(
+              <Fragment
+                key={`${i}-${j}`}
+                position={[i * 2, 1.5, j * 2]}
+                color='white'
+                amount={50}
+                emissive='green'
+                glow='lightgreen'
+              />
             )
           }
         }
