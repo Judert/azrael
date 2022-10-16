@@ -47,7 +47,8 @@ export default function Level() {
               <Fragment
                 key={`${i}-${j}`}
                 position={[i * 2, 1.5, j * 2]}
-                scale={[0.5, 1, 0.5]}
+                color='white'
+                scale={[0.75, 0.75, 0.75]}
               />
             )
           }
