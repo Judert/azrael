@@ -9,6 +9,7 @@ import { useRouter } from 'next/router'
 export default function Map({ edit, setEdit }) {
   const [penColor, setPenColor] = useState('black')
   const [map, setMap] = useContext(MapContext)
+  const [play, setPlay] = useContext(PlayContext)
   const router = useRouter()
 
   const editCommit = () => {

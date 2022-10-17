@@ -1,4 +1,4 @@
-import { MapContext } from '@/lib/context'
+import { MapContext, PlayContext } from '@/lib/context'
 import { useKeyPress } from '@/lib/hooks'
 import { getCookie, hasCookie, setCookie } from 'cookies-next'
 import dynamic from 'next/dynamic'
@@ -11,7 +11,22 @@ const Level = dynamic(() => import('@/components/canvas/Level'), {
 })
 
 export default function Page(props) {
-  return <></>
+  const [play, setPlay] = useContext(PlayContext)
+
+  // create a hud component to display the play state
+  return (
+    <>
+      <div className='absolute text-white bottom-1 left-1'>
+        <div className='text-2xl font-bold'>
+          {play.fragments < 4 ? (
+            <>Fragments {play.fragments}/4</>
+          ) : (
+            <>Go to the Beacon</>
+          )}
+        </div>
+      </div>
+    </>
+  )
 }
 
 Page.r3f = (props) => <Scene {...props} />

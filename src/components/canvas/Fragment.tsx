@@ -1,14 +1,16 @@
 import * as THREE from 'three'
 import { Billboard, Edges, Shadow, Sparkles, useGLTF } from '@react-three/drei'
 import { LayerMaterial, Depth, Fresnel } from 'lamina'
-import { useLayoutEffect, useRef } from 'react'
+import { useContext, useLayoutEffect, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
+import { PlayContext } from '@/lib/context'
 
 const gradient = 0.7
 
 export default function Fragment(props) {
   const mat = useRef()
-  const ref = useRef()
+  const ref = useRef({ taken: false })
+  const [play, setPlay] = useContext(PlayContext)
 
   useLayoutEffect(() => {
     // flip the fragment upside down
@@ -17,21 +19,30 @@ export default function Fragment(props) {
 
   // Animate gradient
   useFrame((state) => {
-    const sin = Math.sin(state.clock.elapsedTime / 2)
-    const cos = Math.cos(state.clock.elapsedTime / 2)
-    mat.current.layers[0].origin.set(cos / 2, 0, 0)
-    mat.current.layers[1].origin.set(cos, sin, cos)
-    mat.current.layers[2].origin.set(sin, cos, sin)
-    mat.current.layers[3].origin.set(cos, sin, cos)
-    // rotate ref
-    ref.current.rotation.y += 0.0025
-    // make the fragment go up and down
-    ref.current.position.y = sin + 2
+    // if distane to the player is less than 1: disappear and add to score
+    const distance = state.camera.position.distanceTo(ref.current.position)
+    if (distance < 1 && !ref.current.taken) {
+      setPlay((state) => ({ ...state, fragments: state.fragments + 1 }))
+      ref.current.visible = false
+      ref.current.taken = true
+    }
+    if (ref.current.visible) {
+      const sin = Math.sin(state.clock.elapsedTime / 2)
+      const cos = Math.cos(state.clock.elapsedTime / 2)
+      mat.current.layers[0].origin.set(cos / 2, 0, 0)
+      mat.current.layers[1].origin.set(cos, sin, cos)
+      mat.current.layers[2].origin.set(sin, cos, sin)
+      mat.current.layers[3].origin.set(cos, sin, cos)
+      // rotate ref
+      ref.current.rotation.y += 0.0025
+      // make the fragment go up and down
+      ref.current.position.y = sin + 2
+    }
   })
 
   return (
     <>
-      <mesh ref={ref} {...props} receiveShadow castShadow>
+      <mesh ref={ref} {...props}>
         <coneGeometry args={[1, 2, 3]} />
         <LayerMaterial ref={mat} toneMapped={false}>
           <Depth
@@ -81,6 +92,7 @@ export default function Fragment(props) {
         <Edges color='white' />
       </mesh>
       <Sparkles
+        visible={ref.current.visible}
         position={[props.position[0], props.position[1], props.position[2]]}
         size={5}
         scale={3}

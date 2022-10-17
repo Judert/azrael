@@ -6,19 +6,18 @@ import { MapContext } from '@/lib/context'
 import { Physics } from '@react-three/cannon'
 import { Sky, useDepthBuffer } from '@react-three/drei'
 import { useContext, useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { Box } from './Box'
+import Beacon from './Beacon'
 import { Enemy } from './Enemy'
 import Fragment from './Fragment'
 import Spotlight from './Spotlight'
 
 export default function Level() {
   const [map, setMap] = useContext(MapContext)
-  const depthBuffer = useDepthBuffer()
   const [player, setPlayer] = useState(false)
   const [physical, setPhysical] = useState([])
   const [intangible, setIntangible] = useState([])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     let physical = []
     let intangible = []
     for (let i = 0; i < 18; i++) {
@@ -51,6 +50,15 @@ export default function Level() {
                 scale={[0.75, 0.75, 0.75]}
               />
             )
+          } else if (color === 'green') {
+            intangible.push(
+              <Beacon
+                key={`${i}-${j}`}
+                position={[i * 2, 12, j * 2]}
+                color='white'
+                // scale={[0.75, 0.75, 0.75]}
+              />
+            )
           }
         }
       }
@@ -63,11 +71,6 @@ export default function Level() {
     <>
       <color attach='background' args={['black']} />
       <fog attach='fog' args={['black', 0, 100]} />
-      <Spotlight
-        depthBuffer={depthBuffer}
-        color='white'
-        position={[17, 25, 17]}
-      />
       {intangible}
       <Physics gravity={[0, -30, 0]}>
         {physical}
