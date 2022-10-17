@@ -111,7 +111,7 @@ export default function Map({ edit, setEdit }) {
           </div>
         )}
       </div>
-      <div className='flex flex-row justify-center p-4 gap-4'>
+      <div className='flex flex-row justify-center p-4 gap-1'>
         {edit ? (
           <>
             <button onClick={() => editCommit()}>Save</button>
@@ -119,8 +119,15 @@ export default function Map({ edit, setEdit }) {
           </>
         ) : (
           <>
-            <button onClick={() => router.push('/play')}>Play</button>
-            <button onClick={() => setEdit(true)}>Edit</button>
+            <button
+              className='btn-primary'
+              onClick={() => router.push('/play')}
+            >
+              Play
+            </button>
+            <button className='btn-outline' onClick={() => setEdit(true)}>
+              Edit
+            </button>
           </>
         )}
       </div>
