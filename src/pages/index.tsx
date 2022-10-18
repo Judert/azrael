@@ -1,23 +1,10 @@
-import { Ground } from '@/components/canvas/Ground'
-import { Player } from '@/components/canvas/Player'
-import { Roof } from '@/components/canvas/Roof'
-import { Wall } from '@/components/canvas/Wall'
-import { Physics } from '@react-three/cannon'
-import { Sky } from '@react-three/drei'
-import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
-import { useContext, useEffect, useLayoutEffect, useRef, useState } from 'react'
-import {
-  getCookies,
-  getCookie,
-  setCookie,
-  deleteCookie,
-  hasCookie,
-} from 'cookies-next'
+import { useContext, useEffect, useState } from 'react'
+import { getCookie, setCookie, hasCookie } from 'cookies-next'
 import Map from '@/components/dom/Map'
 import { MapContext, PlayContext } from '@/lib/context'
 import level from '@/data/level.json'
-import { useKeyPress } from '@/lib/hooks'
+import Container from '@/components/dom/Container'
 
 export const getStaticProps = () => {
   return {
@@ -40,16 +27,44 @@ export default function Page(props) {
   }, [])
 
   return (
-    <main className='container flex flex-col items-center justify-center p-4 mx-auto text-white'>
-      <h1 className='mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white'>
-        Title
-      </h1>
+    <Container>
+      <div className='flex flex-row mb-4 gap-4'>
+        <h1 className='text-5xl font-extrabold'>AZRAEL</h1>
+        <InfoButton />
+      </div>
       <div className='flex flex-col justify-center max-w-xl p-4 items-left gap-4'>
-        <h2 className='text-4xl font-extrabold dark:text-white'>
-          Completed {play.completed}/3
-        </h2>
+        <h2 className='text-3xl font-bold'>Completed {play.completed}/3</h2>
         <Map edit={edit} setEdit={setEdit} />
       </div>
-    </main>
+    </Container>
+  )
+}
+
+function InfoButton() {
+  const router = useRouter()
+
+  return (
+    <button
+      type='button'
+      className='btn-icon'
+      onClick={() => router.push('/story')}
+    >
+      <svg
+        xmlns='http://www.w3.org/2000/svg'
+        fill='none'
+        viewBox='0 0 24 24'
+        stroke-width='1.5'
+        stroke='currentColor'
+        className='w-6 h-6'
+      >
+        <path
+          stroke-linecap='round'
+          stroke-linejoin='round'
+          d='M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z'
+        />
+      </svg>
+
+      <span className='sr-only'>Icon description</span>
+    </button>
   )
 }
