@@ -12,14 +12,14 @@ export const getStaticProps = () => {
 export default function Page(props) {
   return (
     <Container>
-      <div className='flex flex-row mb-4 gap-2'>
+      <div className='flex flex-row mb-6 gap-2'>
         <InfoButton />
         <h1 className='text-5xl font-extrabold'>Backstory</h1>
       </div>
-      <p className='max-w-lg mb-2 text-xl font-normal text-center text-gray-400'>
+      <p className='max-w-lg text-xl font-normal text-center text-gray-400'>
         Azrael is tasked with transporting souls of the deceased to the
-        afterlife. Escape death by collecting all the fragments and heading to
-        the beacon.
+        afterlife. Escape death by collecting all the fragments and use the
+        beacon to go back to Earth.
       </p>
     </Container>
   )

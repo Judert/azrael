@@ -25,13 +25,6 @@ export default function Beacon(props) {
   const router = useRouter()
   const depthBuffer = useDepthBuffer()
 
-  console.log(props)
-
-  useLayoutEffect(() => {
-    // flip the fragment upside down
-    // ref.current.rotation.x = Math.PI
-  }, [])
-
   // Animate gradient
   useFrame((state) => {
     // if the player is in the same block as the beacon: disappear and add to score

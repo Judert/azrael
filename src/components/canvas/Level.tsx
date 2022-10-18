@@ -17,7 +17,7 @@ export default function Level() {
   const [physical, setPhysical] = useState([])
   const [intangible, setIntangible] = useState([])
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     let physical = []
     let intangible = []
     for (let i = 0; i < 18; i++) {

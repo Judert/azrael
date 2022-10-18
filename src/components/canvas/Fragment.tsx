@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { Billboard, Edges, Shadow, Sparkles, useGLTF } from '@react-three/drei'
 import { LayerMaterial, Depth, Fresnel } from 'lamina'
-import { useContext, useLayoutEffect, useRef } from 'react'
+import { useContext, useEffect, useLayoutEffect, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { PlayContext } from '@/lib/context'
 
@@ -12,7 +12,7 @@ export default function Fragment(props) {
   const ref = useRef({ taken: false })
   const [play, setPlay] = useContext(PlayContext)
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     // flip the fragment upside down
     ref.current.rotation.x = Math.PI
   }, [])
