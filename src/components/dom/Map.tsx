@@ -5,6 +5,7 @@ import Pixel from './Pixel'
 import { MapContext, PlayContext } from '@/lib/context'
 import level from '@/data/level.json'
 import { useRouter } from 'next/router'
+import ButtonColor from './ButtonColor'
 
 export default function Map({ edit, setEdit }) {
   const [penColor, setPenColor] = useState('black')
@@ -97,15 +98,16 @@ export default function Map({ edit, setEdit }) {
           })}
         </div>
         {edit && (
-          <div className='flex flex-col justify-center gap-4'>
+          <div className='flex flex-col justify-center gap-1'>
             {Object.entries(Objects).map(([key, value]) => {
               return (
-                <button
-                  key={key}
-                  onClick={() => setPenColor(value.description)}
-                >
-                  {key}
-                </button>
+                // <button
+                //   key={key}
+                //   onClick={() => setPenColor(value.description)}
+                // >
+                //   {key}
+                // </button>
+                <ButtonColor key={key} name={key} color={value.description} />
               )
             })}
           </div>
@@ -114,8 +116,12 @@ export default function Map({ edit, setEdit }) {
       <div className='flex flex-row justify-center p-4 gap-1'>
         {edit ? (
           <>
-            <button onClick={() => editCommit()}>Save</button>
-            <button onClick={() => editCancel()}>Cancel</button>
+            <button className='btn-primary' onClick={() => editCommit()}>
+              Save
+            </button>
+            <button className='btn-outline' onClick={() => editCancel()}>
+              Cancel
+            </button>
           </>
         ) : (
           <>
