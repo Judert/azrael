@@ -16,7 +16,7 @@ export default function Page(props) {
         <InfoButton />
         <h1 className='text-5xl font-extrabold'>Backstory</h1>
       </div>
-      <p className='max-w-lg text-xl font-normal text-center text-gray-400'>
+      <p className='max-w-lg text-xl font-normal text-center text-neutral-400'>
         Azrael is tasked with transporting souls of the deceased to the
         afterlife. Escape death by collecting all the fragments and use the
         beacon to go back to Earth.

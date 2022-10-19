@@ -6,5 +6,5 @@ export const Objects = Object.freeze({
   Fragment: Symbol('hotpink'),
   Beacon: Symbol('green'),
   Player: Symbol('cyan'),
-  Enemy: Symbol('red'),
+  Azrael: Symbol('red'),
 })

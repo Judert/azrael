@@ -15,13 +15,15 @@ export const getStaticProps = () => {
 }
 
 export default function Page(props) {
-  const [edit, setEdit] = useState(false)
-  const [map, setMap] = useContext(MapContext)
   const [play, setPlay] = useContext(PlayContext)
 
   useEffect(() => {
     if (!hasCookie('1')) {
-      setCookie('1', level)
+      levelGenerate()
+      console.log(map)
+      setCookie('1', map, {
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
+      })
     }
     setMap(JSON.parse(String(getCookie('1'))))
   }, [])
@@ -35,7 +37,7 @@ export default function Page(props) {
       </div>
       <div className='flex flex-col justify-center max-w-xl p-4 items-left gap-4'>
         <h2 className='text-3xl font-bold'>Completed {play.completed}/3</h2>
-        <Map edit={edit} setEdit={setEdit} />
+        <Map />
       </div>
     </Container>
   )

@@ -13,6 +13,7 @@
     "@react-three/cannon": "^6.4.0",
     "@react-three/drei": "^9.32.3",
     "@react-three/fiber": "^8.8.4",
+    "clsx": "^1.2.1",
     "cookies-next": "^2.1.1",
     "fs": "^0.0.1-security",
     "glsl-random": "^0.0.5",
