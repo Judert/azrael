@@ -1,9 +1,8 @@
 import { useRouter } from 'next/router'
 import { useContext, useEffect, useState } from 'react'
 import { getCookie, setCookie, hasCookie } from 'cookies-next'
-import Map from '@/components/dom/Map'
+import Map, { levelGenerate } from '@/components/dom/Map'
 import { MapContext, PlayContext } from '@/lib/context'
-import level from '@/data/level.json'
 import Container from '@/components/dom/Container'
 
 export const getStaticProps = () => {
@@ -16,16 +15,21 @@ export const getStaticProps = () => {
 
 export default function Page(props) {
   const [play, setPlay] = useContext(PlayContext)
+  const [map, setMap] = useContext(MapContext)
 
   useEffect(() => {
-    if (!hasCookie('1')) {
-      levelGenerate()
-      console.log(map)
-      setCookie('1', map, {
+    if (hasCookie('completed')) {
+      setPlay({ ...play, completed: getCookie('completed') })
+    }
+    if (hasCookie('level')) {
+      setMap(JSON.parse(String(getCookie('level'))))
+    } else {
+      const map = levelGenerate()
+      setMap(map)
+      setCookie('level', map, {
         expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
       })
     }
-    setMap(JSON.parse(String(getCookie('1'))))
   }, [])
 
   return (
@@ -37,7 +41,7 @@ export default function Page(props) {
       </div>
       <div className='flex flex-col justify-center max-w-xl p-4 items-left gap-4'>
         <h2 className='text-3xl font-bold'>Completed {play.completed}/3</h2>
-        <Map />
+        {map && <Map />}
       </div>
     </Container>
   )

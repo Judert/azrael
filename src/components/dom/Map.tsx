@@ -51,7 +51,7 @@ export default function Map() {
 
     if (!error) {
       setEdit(false)
-      setCookie('1', map, {
+      setCookie('level', map, {
         expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
       })
     }
@@ -59,7 +59,7 @@ export default function Map() {
 
   const editCancel = () => {
     setEdit(false)
-    setMap(JSON.parse(String(getCookie('1'))))
+    setMap(JSON.parse(String(getCookie('level'))))
   }
 
   const levelExport = () => {
@@ -94,62 +94,14 @@ export default function Map() {
     )
   }
 
-  const levelGenerate = () => {
-    let grid = getInitialGrid(16, 16)
-    const walls = recursiveDivisionMaze(grid, grid[0][0], grid[15][15])
-    grid = getNewGridWithMaze(grid, walls)
-    let map = Array.from({ length: 16 }, () =>
-      Array.from({ length: 16 }, () => 'white')
-    )
-    map[0][0] = 'cyan'
-    map[15][15] = 'red'
-    let beacon = []
-    let topleft = []
-    let topright = []
-    let bottomleft = []
-    let bottomright = []
-    for (let i = grid.length - 1; i >= 0; i--) {
-      for (let j = grid[i].length - 1; j >= 0; j--) {
-        if (i === 0 && j === 0) {
-          continue
-        } else if (i === 15 && j === 15) {
-          continue
-        } else if (grid[i][j].isWall) {
-          map[i][j] = 'black'
-        }
-        // if index is in the center quadrant, make it green
-        else if (i > 5 && i < 10 && j > 5 && j < 10) {
-          beacon.push([i, j])
-        } else if (i < 5 && j < 5) {
-          topleft.push([i, j])
-        } else if (i < 5 && j > 10) {
-          topright.push([i, j])
-        } else if (i > 10 && j < 5) {
-          bottomleft.push([i, j])
-        } else if (i > 10 && j > 10) {
-          bottomright.push([i, j])
-        }
-      }
-    }
-    // pick a random index of each list and make it green
-    let random = beacon[Math.floor(Math.random() * beacon.length)]
-    map[random[0]][random[1]] = 'green'
-    random = topleft[Math.floor(Math.random() * topleft.length)]
-    map[random[0]][random[1]] = 'hotpink'
-    random = topright[Math.floor(Math.random() * topright.length)]
-    map[random[0]][random[1]] = 'hotpink'
-    random = bottomleft[Math.floor(Math.random() * bottomleft.length)]
-    map[random[0]][random[1]] = 'hotpink'
-    random = bottomright[Math.floor(Math.random() * bottomright.length)]
-    map[random[0]][random[1]] = 'hotpink'
-    setMap(map)
-  }
-
   return (
     <div className='flex flex-col gap-4'>
       {edit && (
         <div className='flex flex-row gap-1'>
-          <button className='btn-outline' onClick={() => levelGenerate()}>
+          <button
+            className='btn-outline'
+            onClick={() => setMap(levelGenerate())}
+          >
             Generate
           </button>
           <button className='btn-outline' onClick={() => levelClear()}>
@@ -243,4 +195,55 @@ export default function Map() {
       </div>
     </div>
   )
+}
+
+export const levelGenerate = () => {
+  let grid = getInitialGrid(16, 16)
+  const walls = recursiveDivisionMaze(grid, grid[0][0], grid[15][15])
+  grid = getNewGridWithMaze(grid, walls)
+  let map = Array.from({ length: 16 }, () =>
+    Array.from({ length: 16 }, () => 'white')
+  )
+  map[0][0] = 'cyan'
+  map[15][15] = 'red'
+  let beacon = []
+  let topleft = []
+  let topright = []
+  let bottomleft = []
+  let bottomright = []
+  for (let i = grid.length - 1; i >= 0; i--) {
+    for (let j = grid[i].length - 1; j >= 0; j--) {
+      if (i === 0 && j === 0) {
+        continue
+      } else if (i === 15 && j === 15) {
+        continue
+      } else if (grid[i][j].isWall) {
+        map[i][j] = 'black'
+      }
+      // if index is in the center quadrant, make it green
+      else if (i > 5 && i < 10 && j > 5 && j < 10) {
+        beacon.push([i, j])
+      } else if (i < 5 && j < 5) {
+        topleft.push([i, j])
+      } else if (i < 5 && j > 10) {
+        topright.push([i, j])
+      } else if (i > 10 && j < 5) {
+        bottomleft.push([i, j])
+      } else if (i > 10 && j > 10) {
+        bottomright.push([i, j])
+      }
+    }
+  }
+  // pick a random index of each list and make it green
+  let random = beacon[Math.floor(Math.random() * beacon.length)]
+  map[random[0]][random[1]] = 'green'
+  random = topleft[Math.floor(Math.random() * topleft.length)]
+  map[random[0]][random[1]] = 'hotpink'
+  random = topright[Math.floor(Math.random() * topright.length)]
+  map[random[0]][random[1]] = 'hotpink'
+  random = bottomleft[Math.floor(Math.random() * bottomleft.length)]
+  map[random[0]][random[1]] = 'hotpink'
+  random = bottomright[Math.floor(Math.random() * bottomright.length)]
+  map[random[0]][random[1]] = 'hotpink'
+  return map
 }

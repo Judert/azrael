@@ -13,6 +13,7 @@ import { useFrame } from '@react-three/fiber'
 import { PlayContext } from '@/lib/context'
 import { useRouter } from 'next/router'
 import Spotlight from './Spotlight'
+import { setCookie } from 'cookies-next'
 
 const gradient = 0.7
 const near = 5
@@ -39,7 +40,11 @@ export default function Beacon(props) {
       !ref.current.won
     ) {
       router.push('/')
-      setPlay((state) => ({ ...state, completed: state.completed + 1 }))
+      const completed = play.completed + 1
+      setPlay((state) => ({ ...state, completed: completed }))
+      setCookie('completed', completed, {
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
+      })
       ref.current.won = true
     }
     const sin = Math.sin(state.clock.elapsedTime / 2)
