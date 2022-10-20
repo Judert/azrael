@@ -21,7 +21,7 @@ const far = 6
 
 export default function Beacon(props) {
   const mat = useRef()
-  const ref = useRef({ won: false })
+  const ref = useRef()
   const [play, setPlay] = useContext(PlayContext)
   const router = useRouter()
   const depthBuffer = useDepthBuffer()
@@ -37,15 +37,13 @@ export default function Beacon(props) {
       distance[0] < 1 &&
       distance[1] < 1 &&
       play.fragments === 4 &&
-      !ref.current.won
+      !play.won
     ) {
-      router.push('/')
       const completed = play.completed + 1
-      setPlay((state) => ({ ...state, completed: completed }))
+      setPlay((state) => ({ ...state, completed: completed, won: true }))
       setCookie('completed', completed, {
         expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
       })
-      ref.current.won = true
     }
     const sin = Math.sin(state.clock.elapsedTime / 2)
     const cos = Math.cos(state.clock.elapsedTime / 2)

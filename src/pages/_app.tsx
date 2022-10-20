@@ -11,7 +11,12 @@ const LCanvas = dynamic(() => import('@/components/layout/canvas'), {
 
 function App({ Component, pageProps = { title: 'index' } }) {
   const [map, setMap] = useState(null)
-  const [play, setPlay] = useState({ completed: 0, fragments: 0 })
+  const [play, setPlay] = useState({
+    completed: 0,
+    fragments: 0,
+    won: false,
+    lost: false,
+  })
 
   return (
     <PlayContext.Provider value={[play, setPlay]}>
