@@ -1,7 +1,9 @@
+import Container from '@/components/dom/Container'
 import { levelGenerate } from '@/components/dom/Map'
 import { MapContext, PlayContext } from '@/lib/context'
 import { getCookie, hasCookie, setCookie } from 'cookies-next'
 import dynamic from 'next/dynamic'
+import { useRouter } from 'next/router'
 import { useContext, useEffect } from 'react'
 
 const Level = dynamic(() => import('@/components/canvas/Level'), {
@@ -9,21 +11,66 @@ const Level = dynamic(() => import('@/components/canvas/Level'), {
 })
 
 export default function Page(props) {
-  // const [play, setPlay] = useContext(PlayContext)
-  // // create a hud component to display the play state
-  // return (
-  //   <>
-  //     <div className='absolute text-white bottom-6 left-6'>
-  //       <div className='text-2xl font-bold'>
-  //         {play.fragments < 4 ? (
-  //           <>Fragments {play.fragments}/4</>
-  //         ) : (
-  //           <>Go to the Beacon</>
-  //         )}
-  //       </div>
-  //     </div>
-  //   </>
-  // )
+  const [play, setPlay] = useContext(PlayContext)
+  const router = useRouter()
+
+  // set play context to default values
+  useEffect(() => {
+    setPlay((state) => ({
+      ...state,
+      won: false,
+      lost: false,
+      fragments: 0,
+    }))
+  }, [])
+
+  const menu = () => {
+    router.push('/')
+    setPlay((state) => ({
+      ...state,
+      won: false,
+      lost: false,
+      fragments: 0,
+    }))
+  }
+
+  return (
+    <>
+      {play.won ? (
+        <div className='flex flex-col items-center justify-center w-full h-full text-white bg-neutral-900 gap-4'>
+          <h1 className='text-5xl font-extrabold'>YOU SURVIVED</h1>
+          <p>Press ESC to exit fullscreen</p>
+          <div className='flex flex-row'>
+            <button className='btn-primary' onClick={() => menu()}>
+              Main menu
+            </button>
+          </div>
+        </div>
+      ) : play.lost ? (
+        <div className='flex flex-col items-center justify-center w-full h-full text-white bg-neutral-900 gap-4'>
+          <h1 className='text-5xl font-extrabold'>YOU ARE DEAD</h1>
+          <div className='flex flex-row'>
+            <button className='btn-primary' onClick={() => router.reload()}>
+              Retry
+            </button>
+            <button className='btn-primary' onClick={() => menu()}>
+              Main menu
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className='absolute text-white bottom-6 left-6'>
+          <div className='text-3xl font-bold'>
+            {play.fragments < 4 ? (
+              <>Fragments {play.fragments}/4</>
+            ) : (
+              <>Go to the Beacon</>
+            )}
+          </div>
+        </div>
+      )}
+    </>
+  )
 }
 
 Page.r3f = (props) => <Scene {...props} />

@@ -48,11 +48,14 @@ export const Player = (props) => {
     type: 'Dynamic',
     ...props,
   }))
+
   const [map, setMap] = useContext(MapContext)
   const { forward, backward, left, right } = usePlayerControls()
   const { camera } = useThree()
+
   const velocity = useRef([0, 0, 0])
   useEffect(() => api.velocity.subscribe((v) => (velocity.current = v)), [])
+
   useFrame((state) => {
     ref.current.getWorldPosition(camera.position)
     frontVector.set(0, 0, Number(backward) - Number(forward))
@@ -65,6 +68,7 @@ export const Player = (props) => {
     speed.fromArray(velocity.current)
     api.velocity.set(direction.x, velocity.current[1], direction.z)
   })
+
   return (
     <>
       <mesh ref={ref} receiveShadow name='player'>

@@ -34,12 +34,12 @@ export default function Page(props) {
 
   return (
     <Container>
-      <div className='flex flex-row items-center justify-center mb-4 gap-4'>
+      <div className='flex flex-row items-center justify-center gap-4'>
         <Logo />
         <h1 className='text-5xl font-extrabold'>AZRAEL</h1>
         <InfoButton />
       </div>
-      <div className='flex flex-col justify-center max-w-xl p-4 items-left gap-4'>
+      <div className='flex flex-col mt-4 gap-4'>
         <h2 className='text-3xl font-bold'>Completed {play.completed}/3</h2>
         {map && <Map />}
       </div>

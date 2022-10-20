@@ -39,8 +39,14 @@ export default function Beacon(props) {
       play.fragments === 4 &&
       !play.won
     ) {
-      const completed = play.completed + 1
-      setPlay((state) => ({ ...state, completed: completed, won: true }))
+      const completed = Number(play.completed) + 1
+      setPlay((state) => ({
+        ...state,
+        completed: completed,
+        won: true,
+        lost: false,
+        fragments: 0,
+      }))
       setCookie('completed', completed, {
         expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
       })
