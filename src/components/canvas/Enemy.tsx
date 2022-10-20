@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { useContext, useEffect, useRef, useState } from 'react'
 import { useCylinder, useSphere, useBox } from '@react-three/cannon'
-import { useThree, useFrame } from '@react-three/fiber'
+import { useThree, useFrame, useLoader } from '@react-three/fiber'
 import { MapContext } from '@/lib/context'
 import {
   astar,
@@ -9,6 +9,7 @@ import {
   getInitialGrid,
   getNewGridWithMaze,
 } from '@/lib/astar'
+import { PositionalAudio } from '@react-three/drei'
 
 const SPEED = 0.02
 
@@ -29,9 +30,12 @@ export const Enemy = (props) => {
     grid: null,
     path: null,
     time: 0,
+    sound: false,
   })
 
   useEffect(() => {
+    state.current.sound = true
+    // ref.current.visible = false
     resetGrid()
     api.position.subscribe((p) => state.current.position.set(p[0], p[1], p[2]))
     api.rotation.subscribe((r) => state.current.rotation.set(r[0], r[1], r[2]))
@@ -101,11 +105,11 @@ export const Enemy = (props) => {
         const intersects = raycaster.intersectObjects(world.scene.children)
         if (intersects.length > 0) {
           if (intersects[0].object.name === 'player') {
-            api.rotation.set(
-              state.current.rotation.x,
-              Math.atan2(direction.x, direction.z),
-              state.current.rotation.z
-            )
+            // api.rotation.set(
+            //   state.current.rotation.x,
+            //   Math.atan2(direction.x, direction.z),
+            //   state.current.rotation.z
+            // )
             seen = true
           }
         }
@@ -162,7 +166,32 @@ export const Enemy = (props) => {
       <mesh ref={ref} receiveShadow castShadow>
         <boxGeometry />
         <meshStandardMaterial color='red' roughness={0.2} />
+        {/* <Sound url='/assets/violin.ogg' /> */}
+        <PositionalAudio
+          url='/assets/violin.ogg'
+          distance={4}
+          loop
+          autoplay
+          setDistanceModel='linear'
+        />
       </mesh>
     </>
   )
 }
+
+// function Sound({ url }) {
+//   const sound = useRef()
+//   const { camera } = useThree()
+//   const [listener] = useState(() => new THREE.AudioListener())
+//   const buffer = useLoader(THREE.AudioLoader, url)
+//   useEffect(() => {
+//     sound.current.setBuffer(buffer)
+//     sound.current.setRefDistance(4)
+//     sound.current.setLoop(true)
+//     sound.current.play()
+//     sound.current.setDistanceModel('linear')
+//     camera.add(listener)
+//     return () => camera.remove(listener)
+//   }, [])
+//   return <positionalAudio ref={sound} args={[listener]} />
+// }

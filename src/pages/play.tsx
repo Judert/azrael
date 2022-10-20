@@ -53,7 +53,7 @@ export default function Page(props) {
             <button className='btn-primary' onClick={() => router.reload()}>
               Retry
             </button>
-            <button className='btn-primary' onClick={() => menu()}>
+            <button className='btn-outline' onClick={() => menu()}>
               Main menu
             </button>
           </div>

@@ -12,7 +12,7 @@ export const getStaticProps = () => {
 export default function Page(props) {
   return (
     <Container>
-      <div className='flex flex-row mb-6 gap-2'>
+      <div className='flex flex-row items-center justify-center gap-4'>
         <InfoButton />
         <h1 className='text-5xl font-extrabold'>Backstory</h1>
       </div>

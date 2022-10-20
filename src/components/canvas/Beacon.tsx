@@ -28,17 +28,10 @@ export default function Beacon(props) {
 
   // Animate gradient
   useFrame((state) => {
-    // if the player is in the same block as the beacon: disappear and add to score
-    const distance = [
-      state.camera.position.x - props.position[0],
-      state.camera.position.z - props.position[2],
-    ]
-    if (
-      distance[0] < 1 &&
-      distance[1] < 1 &&
-      play.fragments === 4 &&
-      !play.won
-    ) {
+    // get the difference between the cameras x and z position and the beacon
+    const diff = new THREE.Vector3()
+    diff.subVectors(state.camera.position, ref.current.position)
+    if (diff.x < 1 && diff.z < 1 && play.fragments === 4 && !play.won) {
       const completed = Number(play.completed) + 1
       setPlay((state) => ({
         ...state,
