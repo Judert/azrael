@@ -74,6 +74,7 @@ export default function Map() {
 
   const levelImport = (e) => {
     const file = e.target.files[0]
+    if (file === undefined) return
     const reader = new FileReader()
     reader.onload = async (e) => {
       setMap(JSON.parse(String(e.target.result)))
@@ -128,7 +129,7 @@ export default function Map() {
         </div>
       )}
       <div className='flex flex-row gap-4'>
-        <div className='flex flex-col border-8 border-black rounded-lg'>
+        <div className='flex flex-col border-8 border-black rounded-lg shadow-md shadow-black'>
           {map.map((row, i) => {
             return (
               <ol className='flex flex-row' key={i}>

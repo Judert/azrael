@@ -29,7 +29,7 @@ const LCanvas = ({ children }) => {
     >
       <PointerLockControls />
       {/* <FrameLimiter /> */}
-      {/* <AsciiRenderer invert /> */}
+      <AsciiRenderer invert />
       <Preload all />
       {children}
     </Canvas>

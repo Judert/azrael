@@ -35,7 +35,7 @@ export const Enemy = (props) => {
 
   useEffect(() => {
     state.current.sound = true
-    // ref.current.visible = false
+    ref.current.visible = false
     resetGrid()
     api.position.subscribe((p) => state.current.position.set(p[0], p[1], p[2]))
     api.rotation.subscribe((r) => state.current.rotation.set(r[0], r[1], r[2]))
@@ -162,20 +162,20 @@ export const Enemy = (props) => {
     }
   })
   return (
-    <>
-      <mesh ref={ref} receiveShadow castShadow>
+    <group ref={ref}>
+      <mesh receiveShadow castShadow>
         <boxGeometry />
         <meshStandardMaterial color='red' roughness={0.2} />
         {/* <Sound url='/assets/violin.ogg' /> */}
-        <PositionalAudio
-          url='/assets/violin.ogg'
-          distance={4}
-          loop
-          autoplay
-          setDistanceModel='linear'
-        />
       </mesh>
-    </>
+      <PositionalAudio
+        url='/assets/violin.ogg'
+        distance={4}
+        loop
+        autoplay
+        setDistanceModel='linear'
+      />
+    </group>
   )
 }
 
@@ -190,6 +190,22 @@ export const Enemy = (props) => {
 //     sound.current.setLoop(true)
 //     sound.current.play()
 //     sound.current.setDistanceModel('linear')
+//     camera.add(listener)
+//     return () => camera.remove(listener)
+//   }, [])
+//   return <positionalAudio ref={sound} args={[listener]} />
+// }
+
+// function Sound({ url }) {
+//   const sound = useRef()
+//   const { camera } = useThree()
+//   const [listener] = useState(() => new THREE.AudioListener())
+//   const buffer = useLoader(THREE.AudioLoader, url)
+//   useEffect(() => {
+//     sound.current.setBuffer(buffer)
+//     sound.current.setRefDistance(1)
+//     sound.current.setLoop(true)
+//     sound.current.play()
 //     camera.add(listener)
 //     return () => camera.remove(listener)
 //   }, [])

@@ -62,9 +62,9 @@ export default function Page(props) {
         <div className='absolute text-white bottom-6 left-6'>
           <div className='text-3xl font-bold'>
             {play.fragments < 4 ? (
-              <>Fragments {play.fragments}/4</>
+              <div className='bg-black'>Fragments {play.fragments}/4</div>
             ) : (
-              <>Go to the Beacon</>
+              <div className='bg-black'>Go to the Beacon</div>
             )}
           </div>
         </div>

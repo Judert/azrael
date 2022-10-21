@@ -10,10 +10,11 @@ import {
 import { LayerMaterial, Depth, Fresnel } from 'lamina'
 import { useContext, useLayoutEffect, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { PlayContext } from '@/lib/context'
+import { MapContext, PlayContext } from '@/lib/context'
 import { useRouter } from 'next/router'
 import Spotlight from './Spotlight'
 import { setCookie } from 'cookies-next'
+import { levelGenerate } from '../dom/Map'
 
 const gradient = 0.7
 const near = 5
@@ -23,15 +24,29 @@ export default function Beacon(props) {
   const mat = useRef()
   const ref = useRef()
   const [play, setPlay] = useContext(PlayContext)
+  const [map, setMap] = useContext(MapContext)
   const router = useRouter()
   const depthBuffer = useDepthBuffer()
 
   // Animate gradient
   useFrame((state) => {
-    // get the difference between the cameras x and z position and the beacon
-    const diff = new THREE.Vector3()
-    diff.subVectors(state.camera.position, ref.current.position)
-    if (diff.x < 1 && diff.z < 1 && play.fragments === 4 && !play.won) {
+    // get the players block
+    const player = state.camera.position
+    let block = [0, 0]
+    main: for (let i = 1; i <= 16; i++) {
+      for (let j = 1; j <= 16; j++) {
+        if (player.x >= i * 2 - 1 && player.x < i * 2 + 1) {
+          if (player.z >= j * 2 - 1 && player.z < j * 2 + 1) {
+            block = [i - 1, j - 1]
+            break main
+          }
+        }
+      }
+    }
+    const sameBlock =
+      block[0] === props.position[0] / 2 - 1 &&
+      block[1] === props.position[2] / 2 - 1
+    if (sameBlock && play.fragments === 4 && !play.won) {
       const completed = Number(play.completed) + 1
       setPlay((state) => ({
         ...state,
@@ -41,6 +56,11 @@ export default function Beacon(props) {
         fragments: 0,
       }))
       setCookie('completed', completed, {
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
+      })
+      const map = levelGenerate()
+      setMap(map)
+      setCookie('level', map, {
         expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
       })
     }
@@ -110,7 +130,7 @@ export default function Beacon(props) {
       <Spotlight
         depthBuffer={depthBuffer}
         color='white'
-        position={[props.position[0], 24, props.position[2]]}
+        position={[props.position[0], 20, props.position[2]]}
       />
     </>
   )
