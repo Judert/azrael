@@ -73,7 +73,7 @@ export const Enemy = (props) => {
         return [node.row, node.col]
       })
       state.current.path.shift()
-      state.current.path.pop()
+      // state.current.path.pop()
     }
   }
 
@@ -162,7 +162,7 @@ export const Enemy = (props) => {
     }
   })
   return (
-    <group ref={ref}>
+    <group ref={ref} name='enemy'>
       <mesh receiveShadow castShadow>
         <boxGeometry />
         <meshStandardMaterial color='red' roughness={0.2} />
@@ -190,22 +190,6 @@ export const Enemy = (props) => {
 //     sound.current.setLoop(true)
 //     sound.current.play()
 //     sound.current.setDistanceModel('linear')
-//     camera.add(listener)
-//     return () => camera.remove(listener)
-//   }, [])
-//   return <positionalAudio ref={sound} args={[listener]} />
-// }
-
-// function Sound({ url }) {
-//   const sound = useRef()
-//   const { camera } = useThree()
-//   const [listener] = useState(() => new THREE.AudioListener())
-//   const buffer = useLoader(THREE.AudioLoader, url)
-//   useEffect(() => {
-//     sound.current.setBuffer(buffer)
-//     sound.current.setRefDistance(1)
-//     sound.current.setLoop(true)
-//     sound.current.play()
 //     camera.add(listener)
 //     return () => camera.remove(listener)
 //   }, [])

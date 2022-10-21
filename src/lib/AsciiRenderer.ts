@@ -1,6 +1,9 @@
+import * as THREE from 'three'
 import { useFrame, useThree } from '@react-three/fiber'
 import { useEffect, useMemo } from 'react'
 import { AsciiEffect } from 'three-stdlib'
+
+// const characters = ' .:-+*=%@#'
 
 export default function AsciiRenderer({
   renderIndex = 1,
@@ -33,8 +36,28 @@ export default function AsciiRenderer({
     effect.setSize(size.width, size.height)
   }, [effect, size])
 
+    // const shuffle = (str) => [...str].sort(() => Math.random() - 0.5).join('')
+
   // Take over render-loop (that is what the index is for)
   useFrame((state) => {
+    // raycast 360 degrees around the player to find the object named enemy then calculate the distance
+    // const raycaster = new THREE.Raycaster()
+    // const player = state.camera.position
+
+
+    // const intersects = raycaster.intersectObjects(scene.children, true)
+    // const enemy = intersects.find((i) => i.object.name === 'enemy')
+    // const distance = enemy ? enemy.distance : 0
+
+
+    // distance between camera and enemy
+    // const distance = camera.position.distanceTo(enemy.position)
+    // // change the order of ref.characters based on distance
+    // if (distance < 5) {
+    //   const start = shuffle(characters.slice(0, 10 - distance * 2))
+    //   const end = characters.slice(10 - distance * 2)
+    //   console.log(start, end, distance)
+    // }
     effect.render(scene, camera)
   }, renderIndex)
 
