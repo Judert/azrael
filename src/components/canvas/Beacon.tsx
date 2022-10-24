@@ -1,14 +1,6 @@
-import * as THREE from 'three'
-import {
-  Billboard,
-  Edges,
-  Shadow,
-  Sparkles,
-  useDepthBuffer,
-  useGLTF,
-} from '@react-three/drei'
+import { Edges, useDepthBuffer } from '@react-three/drei'
 import { LayerMaterial, Depth, Fresnel } from 'lamina'
-import { useContext, useLayoutEffect, useRef } from 'react'
+import { useContext, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { MapContext, PlayContext } from '@/lib/context'
 import { useRouter } from 'next/router'

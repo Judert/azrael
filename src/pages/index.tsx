@@ -1,17 +1,9 @@
 import { useRouter } from 'next/router'
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect } from 'react'
 import { getCookie, setCookie, hasCookie } from 'cookies-next'
 import Map, { levelGenerate } from '@/components/dom/Map'
 import { MapContext, PlayContext } from '@/lib/context'
 import Container from '@/components/dom/Container'
-
-export const getStaticProps = () => {
-  return {
-    props: {
-      title: 'Index',
-    },
-  }
-}
 
 export default function Page(props) {
   const [play, setPlay] = useContext(PlayContext)

@@ -1,14 +1,6 @@
 import Container from '@/components/dom/Container'
 import { useRouter } from 'next/router'
 
-export const getStaticProps = () => {
-  return {
-    props: {
-      title: 'Story',
-    },
-  }
-}
-
 export default function Page(props) {
   return (
     <Container>
@@ -16,11 +8,17 @@ export default function Page(props) {
         <InfoButton />
         <h1 className='text-5xl font-extrabold'>Backstory</h1>
       </div>
-      <p className='max-w-lg text-xl font-normal text-center text-neutral-400'>
+      <p className='max-w-lg text-center text-neutral-400'>
         Azrael is tasked with transporting souls of the deceased to the
         afterlife. Escape death by collecting all the fragments and use the
         beacon to go back to Earth.
       </p>
+      <a
+        className='font-medium text-neutral-500 hover:underline'
+        href='https://en.wikipedia.org/wiki/Azrael'
+      >
+        Read more
+      </a>
     </Container>
   )
 }

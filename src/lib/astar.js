@@ -100,17 +100,6 @@ const createNode = (row, col) => {
   }
 }
 
-// export const getNewGridWithWalls = (grid, row, col) => {
-//   let newGrid = grid.slice()
-//   let node = grid[row][col]
-//   let newNode = {
-//     ...node,
-//     isWall: !node.isWall,
-//   }
-//   newGrid[row][col] = newNode
-//   return newGrid
-// }
-
 export const getNewGridWithMaze = (grid, walls) => {
   let newGrid = grid.slice()
   for (let wall of walls) {

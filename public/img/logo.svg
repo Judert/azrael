@@ -1,6 +1,22 @@
-<svg viewBox="0 0 800 800" fill="black" xmlns="http://www.w3.org/2000/svg">
-  <rect x="280" y="560" width="240" height="240" fill="inherit" />
-  <rect x="280" y="280" width="240" height="240" fill="inherit" />
-  <rect y="280" width="240" height="240" fill="inherit" />
-  <path fill-rule="evenodd" clip-rule="evenodd" d="M560 0H280V240H560V520H800V0H560Z" fill="inherit" />
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="40mm"
+   height="40.000145mm"
+   viewBox="0 0 40 40.000145"
+   version="1.1"
+   id="svg5"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs2" />
+  <g
+     id="layer1">
+    <path
+       id="path327"
+       style="stroke-width:0.264583"
+       transform="matrix(0.11477094,0,0,0.13252607,11.81424,-6.730097)"
+       d="M 114.88762,50.783193 71.322586,126.24005 27.757551,50.783194 Z m 0,75.456847 L 71.322586,201.6969 27.757551,126.24005 Z M 5.9750309,239.42532 -37.590003,163.96847 -81.155038,239.42532 Z m 217.8251791,0 -43.56504,-75.45685 -43.56503,75.45685 z M -102.93756,50.783193 71.320955,352.61169 245.58397,50.783193 H 158.45468 L 71.320955,201.69548 -15.808334,50.783193 Z" />
+  </g>
 </svg>

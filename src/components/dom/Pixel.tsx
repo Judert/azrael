@@ -1,5 +1,5 @@
 import { MapContext } from '@/lib/context'
-import { useContext, useEffect, useState } from 'react'
+import { useContext } from 'react'
 
 export default function Pixel({ i, j, penColor, edit }) {
   const [map, setMap] = useContext(MapContext)

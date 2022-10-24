@@ -9,7 +9,7 @@ const LCanvas = dynamic(() => import('@/components/layout/canvas'), {
   ssr: true,
 })
 
-function App({ Component, pageProps = { title: 'index' } }) {
+function App({ Component, pageProps = { title: 'Azrael' } }) {
   const [map, setMap] = useState(null)
   const [play, setPlay] = useState({
     completed: 0,
@@ -21,7 +21,7 @@ function App({ Component, pageProps = { title: 'index' } }) {
   return (
     <PlayContext.Provider value={[play, setPlay]}>
       <MapContext.Provider value={[map, setMap]}>
-        <Header title={pageProps.title} />
+        <Header title='Azrael' />
         <Dom>
           <Component {...pageProps} />
         </Dom>

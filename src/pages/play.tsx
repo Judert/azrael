@@ -1,4 +1,3 @@
-import Container from '@/components/dom/Container'
 import { levelGenerate } from '@/components/dom/Map'
 import { MapContext, PlayContext } from '@/lib/context'
 import { getCookie, hasCookie, setCookie } from 'cookies-next'
@@ -50,10 +49,7 @@ export default function Page(props) {
         <div className='flex flex-col items-center justify-center w-full h-full text-white bg-neutral-900 gap-4'>
           <h1 className='text-5xl font-extrabold'>YOU ARE DEAD</h1>
           <div className='flex flex-row'>
-            <button className='btn-primary' onClick={() => router.reload()}>
-              Retry
-            </button>
-            <button className='btn-outline' onClick={() => menu()}>
+            <button className='btn-primary' onClick={() => menu()}>
               Main menu
             </button>
           </div>

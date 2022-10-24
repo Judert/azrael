@@ -1,7 +1,6 @@
-import * as THREE from 'three'
-import { Billboard, Edges, Shadow, Sparkles, useGLTF } from '@react-three/drei'
+import { Edges, Sparkles } from '@react-three/drei'
 import { LayerMaterial, Depth, Fresnel } from 'lamina'
-import { useContext, useEffect, useLayoutEffect, useRef } from 'react'
+import { useContext, useEffect, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { PlayContext } from '@/lib/context'
 

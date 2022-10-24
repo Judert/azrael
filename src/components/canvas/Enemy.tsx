@@ -1,8 +1,8 @@
 import * as THREE from 'three'
-import { useContext, useEffect, useRef, useState } from 'react'
-import { useCylinder, useSphere, useBox } from '@react-three/cannon'
-import { useThree, useFrame, useLoader } from '@react-three/fiber'
-import { MapContext } from '@/lib/context'
+import { useContext, useEffect, useRef } from 'react'
+import { useBox } from '@react-three/cannon'
+import { useFrame } from '@react-three/fiber'
+import { MapContext, PlayContext } from '@/lib/context'
 import {
   astar,
   getNodesInShortestPathOrderAstar,
@@ -23,6 +23,7 @@ export const Enemy = (props) => {
     ...props,
   }))
   const [map, setMap] = useContext(MapContext)
+  const [play, setPlay] = useContext(PlayContext)
   const state = useRef({
     position: new THREE.Vector3(),
     rotation: new THREE.Vector3(),
@@ -31,6 +32,7 @@ export const Enemy = (props) => {
     path: null,
     time: 0,
     sound: false,
+    lost: false,
   })
 
   useEffect(() => {
@@ -97,66 +99,80 @@ export const Enemy = (props) => {
       const player = world.camera.position
       const enemy = state.current.position
       let seen = false
-      if (player.distanceTo(enemy) < 1) {
-        console.log('player is dead')
-      } else {
-        direction.subVectors(player, enemy).normalize()
-        raycaster.set(enemy, direction)
-        const intersects = raycaster.intersectObjects(world.scene.children)
-        if (intersects.length > 0) {
-          if (intersects[0].object.name === 'player') {
-            // api.rotation.set(
-            //   state.current.rotation.x,
-            //   Math.atan2(direction.x, direction.z),
-            //   state.current.rotation.z
-            // )
-            seen = true
-          }
+      direction.subVectors(player, enemy).normalize()
+      raycaster.set(enemy, direction)
+      const intersects = raycaster.intersectObjects(world.scene.children)
+      if (intersects.length > 0) {
+        if (intersects[0].object.name === 'player') {
+          // api.rotation.set(
+          //   state.current.rotation.x,
+          //   Math.atan2(direction.x, direction.z),
+          //   state.current.rotation.z
+          // )
+          seen = true
         }
-        state.current.time += delta
-        if (state.current.time > 0.5) {
-          state.current.time = 0
-          // get block player is in
-          if (seen) {
-            getPlayerBlock(player)
-            getPath(state.current.player)
-          } else if (!(state.current.path && state.current.path[0])) {
-            // generate random x and y that arent walls or keys or exits
-            let x = Math.floor(Math.random() * 16)
-            let y = Math.floor(Math.random() * 16)
-            while (
-              map[x][y] === 'black' ||
-              map[x][y] === 'green' ||
-              map[x][y] === 'hotpink'
-            ) {
-              x = Math.floor(Math.random() * 16)
-              y = Math.floor(Math.random() * 16)
-            }
-            getPath([x, y])
-          }
-          // move towards the next block
-          if (state.current.path && state.current.path[0]) {
-            const nextPos = [
-              (state.current.path[0][0] + 1) * 2,
-              (state.current.path[0][1] + 1) * 2,
-            ]
-            const enemyPos = [enemy.x, enemy.z]
-            const deltaPos = [
-              nextPos[0] - enemyPos[0],
-              nextPos[1] - enemyPos[1],
-            ]
-            api.position.set(
-              enemy.x + deltaPos[0],
-              enemy.y,
-              enemy.z + deltaPos[1]
-            )
-            state.current.path.shift()
-          }
+      }
+      state.current.time += delta
+      if (state.current.time > 0.5) {
+        state.current.time = 0
+        // get block player is in
+        if (seen) {
           getPlayerBlock(player)
-          console.log(state.current.player, [
+          const enemyBlock = [
             state.current.position.x / 2 - 1,
             state.current.position.z / 2 - 1,
-          ])
+          ]
+          // if player is in an adjacent block, game over
+          if (
+            !state.current.lost &&
+            ((enemyBlock[0] === state.current.player[0] &&
+              enemyBlock[1] === state.current.player[1]) ||
+              (enemyBlock[0] === state.current.player[0] &&
+                enemyBlock[1] === state.current.player[1] + 1) ||
+              (enemyBlock[0] === state.current.player[0] &&
+                enemyBlock[1] === state.current.player[1] - 1) ||
+              (enemyBlock[0] === state.current.player[0] + 1 &&
+                enemyBlock[1] === state.current.player[1]) ||
+              (enemyBlock[0] === state.current.player[0] - 1 &&
+                enemyBlock[1] === state.current.player[1]))
+          ) {
+            setPlay((state) => ({
+              ...state,
+              won: false,
+              lost: true,
+              fragments: 0,
+            }))
+            state.current.lost = true
+          }
+          getPath(state.current.player)
+        } else if (!(state.current.path && state.current.path[0])) {
+          // generate random x and y that arent walls or keys or exits
+          let x = Math.floor(Math.random() * 16)
+          let y = Math.floor(Math.random() * 16)
+          while (
+            map[x][y] === 'black' ||
+            map[x][y] === 'green' ||
+            map[x][y] === 'hotpink'
+          ) {
+            x = Math.floor(Math.random() * 16)
+            y = Math.floor(Math.random() * 16)
+          }
+          getPath([x, y])
+        }
+        // move towards the next block
+        if (state.current.path && state.current.path[0]) {
+          const nextPos = [
+            (state.current.path[0][0] + 1) * 2,
+            (state.current.path[0][1] + 1) * 2,
+          ]
+          const enemyPos = [enemy.x, enemy.z]
+          const deltaPos = [nextPos[0] - enemyPos[0], nextPos[1] - enemyPos[1]]
+          api.position.set(
+            enemy.x + deltaPos[0],
+            enemy.y,
+            enemy.z + deltaPos[1]
+          )
+          state.current.path.shift()
         }
       }
     }

@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import { useContext, useEffect, useRef, useState } from 'react'
-import { useCylinder, useSphere, useBox } from '@react-three/cannon'
+import { useSphere } from '@react-three/cannon'
 import { useThree, useFrame } from '@react-three/fiber'
 import { MapContext } from '@/lib/context'
 
