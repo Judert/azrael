@@ -66,6 +66,9 @@ module.exports = (_phase, { defaultConfig }) => {
     {
       ...defaultConfig,
       ...nextConfig,
+      typescript: {
+        ignoreBuildErrors: true,
+      },
     }
   )
 

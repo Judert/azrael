@@ -48,6 +48,7 @@ export default function Page(props) {
       ) : play.lost ? (
         <div className='flex flex-col items-center justify-center w-full h-full text-white bg-neutral-900 gap-4'>
           <h1 className='text-5xl font-extrabold'>YOU ARE DEAD</h1>
+          <p>Press ESC to exit fullscreen</p>
           <div className='flex flex-row'>
             <button className='btn-primary' onClick={() => menu()}>
               Main menu
