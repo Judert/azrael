@@ -1,7 +1,7 @@
 import Head from 'next/head'
 
 const titleDefault = 'Azrael'
-const url = 'https://azrael.vercel.app/'
+const url = 'https://azrael-veselcode.vercel.app/'
 const description =
   '3D game built with React Three Fiber and Next.js. Escape death by collecting all the fragments and use the beacon to go back to Earth.'
 const author = 'veselcode.'

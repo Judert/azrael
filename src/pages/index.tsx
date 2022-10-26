@@ -35,6 +35,13 @@ export default function Page(props) {
         <h2 className='text-3xl font-bold'>Completed {play.completed}/3</h2>
         {map && <Map />}
       </div>
+      <p className='mt-4 font-light text-gray-400'>
+        {'Copyright © '}{' '}
+        <a className='hover:underline' href='https://veselcode.com'>
+          veselcode.
+        </a>{' '}
+        {new Date().getFullYear()}
+      </p>
     </Container>
   )
 }
